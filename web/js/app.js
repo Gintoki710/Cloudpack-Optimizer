@@ -629,22 +629,46 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
-  // Dashboard Mode Switcher Controller (Knapsack FinOps vs 3D Bin Packing)
+  // Dashboard Mode Switcher Controller (Interactive Slider Toggle like Day/Night)
 
   function setupDashboardModeSwitcher() {
+    const pillBtn = document.getElementById('engineTogglePillBtn');
+
     function switchDashboardMode(mode) {
       state.dashboardMode = mode;
-      if (mode === 'binpack') {
-        if (el.btnModeBinpack) el.btnModeBinpack.classList.add('active');
-        if (el.btnModeKnapsack) el.btnModeKnapsack.classList.remove('active');
+      const isBinpack = (mode === 'binpack');
+
+      // 1. Update Center Gliding Slider Pill
+      if (pillBtn) {
+        if (isBinpack) {
+          pillBtn.classList.remove('is-knapsack');
+          pillBtn.classList.add('is-binpack');
+          pillBtn.setAttribute('aria-checked', 'true');
+          pillBtn.setAttribute('title', 'Switch to 0/1 Knapsack Optimizer');
+        } else {
+          pillBtn.classList.remove('is-binpack');
+          pillBtn.classList.add('is-knapsack');
+          pillBtn.setAttribute('aria-checked', 'false');
+          pillBtn.setAttribute('title', 'Switch to Host Node Bin Packing');
+        }
+      }
+
+      // 2. Update Side Engine Tabs
+      if (el.btnModeKnapsack) {
+        el.btnModeKnapsack.classList.toggle('active', !isBinpack);
+      }
+      if (el.btnModeBinpack) {
+        el.btnModeBinpack.classList.toggle('active', isBinpack);
+      }
+
+      // 3. Toggle View Visibility with smooth entrance
+      if (isBinpack) {
         if (el.dashboardBinpackView) el.dashboardBinpackView.style.display = 'flex';
         if (el.dashboardKnapsackView) el.dashboardKnapsackView.style.display = 'none';
         if (el.modeStatusText) el.modeStatusText.textContent = 'Host Node Bin Packing Visualizer & 3D Server Allocations';
         addLog('[Dashboard View] Switched to 3D Host Node Bin Packing stage (Catalog hidden)', 'cyan');
         triggerBinPacking();
       } else {
-        if (el.btnModeKnapsack) el.btnModeKnapsack.classList.add('active');
-        if (el.btnModeBinpack) el.btnModeBinpack.classList.remove('active');
         if (el.dashboardKnapsackView) el.dashboardKnapsackView.style.display = 'flex';
         if (el.dashboardBinpackView) el.dashboardBinpackView.style.display = 'none';
         if (el.modeStatusText) el.modeStatusText.textContent = '0/1 Knapsack Workload Planner (Catalog & Allocations)';
@@ -657,6 +681,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (el.btnModeBinpack) {
       el.btnModeBinpack.addEventListener('click', () => switchDashboardMode('binpack'));
+    }
+    if (pillBtn) {
+      pillBtn.addEventListener('click', () => {
+        const nextMode = (state.dashboardMode === 'knapsack') ? 'binpack' : 'knapsack';
+        switchDashboardMode(nextMode);
+      });
     }
   }
 
@@ -1284,10 +1314,10 @@ document.addEventListener('DOMContentLoaded', () => {
     el.donutLegendContainer.innerHTML = '';
 
     const items = cartItems || [];
-    el.donutCenterCount.textContent = items.length;
+    if (el.donutCenterCount) el.donutCenterCount.textContent = items.length;
 
     if (items.length === 0) {
-      el.donutLegendContainer.innerHTML = '<span class="text-muted" style="font-size: 0.74rem;">Cart empty.</span>';
+      el.donutLegendContainer.innerHTML = '<span class="text-muted" style="font-size: 0.78rem; padding: 0.4rem 0;">No active workloads in cluster cart.</span>';
       return;
     }
 
@@ -1300,11 +1330,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const categories = Object.keys(catCounts);
     const total = items.length;
-    const radius = 60;
-    const circumference = 2 * Math.PI * radius; // ~376.99
+    const radius = 58;
+    const circumference = 2 * Math.PI * radius; // ~364.42
 
     let accumulatedPct = 0;
-    const sliceColors = ['#06b6d4', '#00f59b', '#8b5cf6', '#f59e0b', '#f43f5e', '#ec4899', '#3b82f6'];
+    const sliceColors = ['#06b6d4', '#10b981', '#8b5cf6', '#f59e0b', '#ec4899', '#3b82f6', '#14b8a6', '#f43f5e'];
 
     categories.forEach((cat, idx) => {
       const count = catCounts[cat];
@@ -1313,7 +1343,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const strokeDashoffset = -(accumulatedPct * circumference);
       const color = sliceColors[idx % sliceColors.length];
 
-      // SVG Slice Circle
+      // SVG Slice Circle (Thick, vibrant curved stroke)
       const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       circle.setAttribute('cx', '80');
       circle.setAttribute('cy', '80');
@@ -1323,16 +1353,22 @@ document.addEventListener('DOMContentLoaded', () => {
       circle.setAttribute('stroke-width', '24');
       circle.setAttribute('stroke-dasharray', `${strokeLength} ${circumference}`);
       circle.setAttribute('stroke-dashoffset', strokeDashoffset);
+      circle.style.transition = 'stroke-dasharray 0.4s ease, stroke-dashoffset 0.4s ease';
       el.donutSlicesGroup.appendChild(circle);
 
       accumulatedPct += pct;
 
-      // Legend Item
+      // Rich Legend Chip
       const legendChip = document.createElement('div');
       legendChip.className = 'legend-chip';
       legendChip.innerHTML = `
-        <span class="legend-color-dot" style="background: ${color}"></span>
-        <span>${cat} <strong style="color: var(--text-white)">(${Math.round(pct * 100)}%)</strong></span>
+        <div style="display: flex; align-items: center; gap: 0.45rem;">
+          <span class="legend-color-dot" style="background: ${color}"></span>
+          <span style="font-weight: 600;">${cat}</span>
+        </div>
+        <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-primary); font-weight: 700;">
+          ${count} <span style="color: var(--text-muted); font-size: 0.7rem;">(${Math.round(pct * 100)}%)</span>
+        </span>
       `;
       el.donutLegendContainer.appendChild(legendChip);
     });
