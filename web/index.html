@@ -244,51 +244,81 @@
       <main class="content-scrollable">
 
         <!-- ===================================================================== -->
-        <!-- VIEW 1: EXECUTIVE DASHBOARD (CATALOG + CART + 3D PACKER)              -->
+        <!-- VIEW 1: EXECUTIVE DASHBOARD (INTERACTIVE KNAPSACK / BIN PACKING MODES) -->
         <!-- ===================================================================== -->
         <div id="tab-dashboard" class="tab-panel active">
           
-          <div class="dashboard-split-grid">
+          <!-- Interactive Mode Switcher Bar -->
+          <div class="dashboard-mode-switcher-bar">
+            <div class="mode-switch-group">
+              <button class="mode-switch-btn active" id="btnModeKnapsack" data-mode="knapsack" type="button">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                <span>0/1 Knapsack Optimizer</span>
+                <span class="mode-pill-badge">Catalog &amp; Cart</span>
+              </button>
+              <button class="mode-switch-btn" id="btnModeBinpack" data-mode="binpack" type="button">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                <span>Host Node Bin Packing</span>
+                <span class="mode-pill-badge">3D Server Nodes</span>
+              </button>
+            </div>
+            <div class="mode-meta-info" id="modeMetaInfo">
+              <span class="mode-tip-text">Active Mode: <strong id="modeStatusText">0/1 Knapsack FinOps Workload Planner</strong></span>
+            </div>
+          </div>
+
+          <!-- MODE 1: KNAPSACK WORKLOAD PLANNER & CATALOG (FULL WIDTH) -->
+          <div id="dashboardKnapsackView" class="dashboard-mode-view">
             
-            <!-- LEFT COLUMN: BUDGET OPTIMIZATION (KNAPSACK / GREEDY) -->
-            <div class="dashboard-left-col">
-              
-              <section class="dash-card">
-                <div class="dash-card-header">
-                  <div>
-                    <h2 class="dash-card-title">Cloud FinOps Budget Optimization (Knapsack DP)</h2>
-                    <p class="dash-card-subtitle">0/1 Discrete Knapsack DP • Maximizes Resale & Utility Under Budget</p>
+            <!-- FinOps Budget & Controls Card -->
+            <section class="dash-card">
+              <div class="dash-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                  <h2 class="dash-card-title">Cloud FinOps Budget Optimization (0/1 Knapsack DP)</h2>
+                  <p class="dash-card-subtitle">Globally Optimal Dynamic Programming • Maximizes Cluster SLA Utility strictly within Budget</p>
+                </div>
+                <div class="optimal-dp-badge">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Globally Optimal DP Active</span>
+                </div>
+              </div>
+
+              <!-- Financial Metric Cards (4 in a row) -->
+              <div class="fin-stats-grid">
+                <div class="fin-card">
+                  <span class="fin-label">Cloud Budget Limit</span>
+                  <div class="fin-val" id="dispBudgetLimit">$10,000</div>
+                </div>
+                <div class="fin-card">
+                  <span class="fin-label">Active Workload Spend</span>
+                  <div class="fin-val" id="dispCartCost">$0</div>
+                </div>
+                <div class="fin-card">
+                  <span class="fin-label">Cluster SLA Score</span>
+                  <div class="fin-val text-white" id="dispCartUtility">0 pts</div>
+                </div>
+                <div class="fin-card">
+                  <span class="fin-label">Unallocated Cloud Budget</span>
+                  <div class="fin-val" id="dispRemainingBudget">$10,000</div>
+                </div>
+              </div>
+
+              <!-- Top Knapsack Action Trigger & Category Donut row -->
+              <div style="display: grid; grid-template-columns: minmax(280px, 1fr) auto; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                <div class="knapsack-trigger-bar" style="margin-top: 0;">
+                  <div class="budget-input-inline">
+                    <label for="budgetInput">Spending Budget ($):</label>
+                    <input type="number" id="budgetInput" value="10000" min="100" max="100000" step="500" class="input-budget-field">
                   </div>
-                  
-                  <div class="toggle-pill-group">
-                    <button class="toggle-pill" id="btnToggleGreedy">Greedy Approach</button>
-                    <button class="toggle-pill active" id="btnToggleDp">DP Approach</button>
-                  </div>
+                  <button class="btn-stark-white" id="btnRunKnapsack">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    Auto-Maximize Cart (0/1 Knapsack DP)
+                  </button>
                 </div>
 
-                <!-- Financial Metric Cards (2x2 Grid) -->
-                <div class="fin-stats-grid">
-                  <div class="fin-card">
-                    <span class="fin-label">Cloud Budget Limit</span>
-                    <div class="fin-val" id="dispBudgetLimit">$10,000</div>
-                  </div>
-                  <div class="fin-card">
-                    <span class="fin-label">Active Workload Spend</span>
-                    <div class="fin-val" id="dispCartCost">$0</div>
-                  </div>
-                  <div class="fin-card">
-                    <span class="fin-label">Cluster SLA Score</span>
-                    <div class="fin-val text-white" id="dispCartUtility">0 pts</div>
-                  </div>
-                  <div class="fin-card">
-                    <span class="fin-label">Unallocated Cloud Budget</span>
-                    <div class="fin-val" id="dispRemainingBudget">$10,000</div>
-                  </div>
-                </div>
-
-                <!-- Donut Chart & Category Breakdown -->
-                <div class="donut-section-wrapper">
-                  <div class="donut-chart-container">
+                <!-- Donut Chart & Category Breakdown (Compact) -->
+                <div class="donut-section-wrapper" style="margin-top: 0; padding: 0.6rem 0.9rem;">
+                  <div class="donut-chart-container" style="width: 70px; height: 70px;">
                     <svg id="categoryDonutSvg" viewBox="0 0 160 160" class="donut-svg">
                       <circle cx="80" cy="80" r="60" fill="transparent" stroke="#1c1c1c" stroke-width="24" />
                       <g id="donutSlicesGroup"></g>
@@ -296,190 +326,163 @@
                       <text x="80" y="93" text-anchor="middle" class="donut-center-label">Items</text>
                     </svg>
                   </div>
-                  
-                  <div class="donut-legend" id="donutLegendContainer">
-                    <!-- Dynamic Categories Legend -->
+                  <div class="donut-legend" id="donutLegendContainer"></div>
+                </div>
+              </div>
+
+              <!-- Insight Alert -->
+              <div class="opt-insight-pill" id="optInsightBanner" style="display: none;">
+                <span class="opt-insight-icon">💡</span>
+                <span class="opt-insight-text" id="optInsightText"></span>
+              </div>
+            </section>
+
+            <!-- AVAILABLE MICROSERVICE POD CATALOG (FULL WIDTH) -->
+            <section class="dash-card catalog-inventory-card">
+              <div class="dash-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                  <h3 class="dash-card-title">Available Microservice Pod Catalog</h3>
+                  <p class="dash-card-subtitle">Explore indexed cloud workloads with descriptive roles, specifications &amp; SLA utility</p>
+                </div>
+                <div style="display: flex; gap: 0.4rem; align-items: center;">
+                  <span class="badge-tag-mono" id="avlNodeCountBadge">21 workloads indexed</span>
+                  <button class="btn-xs btn-stark-white" id="btnOpenAddItemModal">+ Custom Pod</button>
+                </div>
+              </div>
+
+              <!-- Real-time Filter & Search Bar -->
+              <div class="inventory-filter-bar" style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 220px;">
+                  <input type="text" id="catalogSearchInput" placeholder="🔍 Search workloads by pod name, category, or role description..." class="form-input" style="padding: 0.5rem 0.85rem; font-size: 0.82rem; width: 100%;">
+                </div>
+                <div class="category-filter-chips" id="categoryFilterChips" style="display: flex; gap: 0.35rem; flex-wrap: wrap;"></div>
+              </div>
+
+              <!-- Available Items Grid -->
+              <div class="catalog-list-scroll" style="max-height: 560px; overflow-y: auto; padding-right: 4px;">
+                <div class="catalog-list" id="catalogItemsContainer"></div>
+              </div>
+            </section>
+
+            <!-- Active Cluster Workload Allocations (Manifest Table) -->
+            <section class="cart-table-card">
+              <div class="cart-table-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <span class="table-title">Active Cluster Workload Allocations</span>
+                  <span style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">Pods scheduled for host node bin-packing &amp; FinOps optimization</span>
+                </div>
+                <div class="table-actions">
+                  <button class="btn-xs btn-subtle" id="btnClearCart">Decommission All</button>
+                </div>
+              </div>
+
+              <div class="table-scroll-wrap">
+                <table class="modern-table">
+                  <thead>
+                    <tr>
+                      <th>Microservice Workload</th>
+                      <th class="text-right">Monthly Cost</th>
+                      <th class="text-right">SLA Score</th>
+                      <th class="text-right">Memory Footprint</th>
+                      <th class="text-center">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="cartTableBody"></tbody>
+                </table>
+                <div id="cartEmptyState" class="empty-state-card" style="display: none;">
+                  <p>Your cluster workload allocation is empty. Click <strong>+ Deploy Pod</strong> on any catalog item above or <strong>Auto-Maximize Cart</strong> to schedule workloads.</p>
+                </div>
+              </div>
+            </section>
+
+          </div>
+
+          <!-- MODE 2: BIN PACKING / 3D HOST NODE SCHEDULER (FULL WIDTH, NO CATALOG) -->
+          <div id="dashboardBinpackView" class="dashboard-mode-view" style="display: none;">
+            
+            <section class="dash-card">
+              <div class="dash-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                  <h2 class="dash-card-title">Cluster Host Node Bin Packing Visualizer</h2>
+                  <p class="dash-card-subtitle">Host Compute Nodes (Capacity: <span id="dispBoxCapTag">64.0 GB RAM</span> • Minimizes Provisioned Servers)</p>
+                </div>
+                
+                <div class="packer-meta-stats" style="display: flex; gap: 0.5rem;">
+                  <span class="badge-tag-mono" id="packerBoxCountBadge">0 Nodes Active</span>
+                  <span class="badge-tag-mono" id="packerCourierCostBadge">Node Spend: $0.00</span>
+                </div>
+              </div>
+
+              <!-- 3D Wireframe Glass Bins Display Stage (Roomy & Full Width) -->
+              <div class="bins-wireframe-stage" id="binsWireframeStage" style="min-height: 380px;">
+                <!-- Wireframe server nodes rendered dynamically here -->
+              </div>
+
+              <!-- Item Queue / Unpacked Staging Area -->
+              <div class="queue-section">
+                <div class="queue-title-row">
+                  <span class="queue-label">Workload Queue &amp; Staging (Unplaced Pods):</span>
+                  <span class="queue-count" id="unpackedItemsCount">0 pending</span>
+                </div>
+                
+                <div class="item-queue-container" id="itemQueueContainer">
+                  <!-- Dimensional blocks waiting to be packed -->
+                </div>
+              </div>
+
+              <!-- Simulation & Controls -->
+              <div class="simulation-controls-card">
+                <div class="controls-row">
+                  <div class="control-group">
+                    <label class="ctrl-label">Placement Algorithm:</label>
+                    <select id="packerAlgoSelect" class="select-dropdown">
+                      <option value="FFD" selected>First-Fit Decreasing (FFD)</option>
+                      <option value="BFD">Best-Fit Decreasing (BFD)</option>
+                      <option value="WFD">Worst-Fit Decreasing (WFD)</option>
+                      <option value="NF">Next-Fit (Naive / Online)</option>
+                    </select>
+                  </div>
+
+                  <div class="control-group">
+                    <label class="ctrl-label">Host RAM Node Size:</label>
+                    <select id="boxCapacitySelect" class="select-dropdown">
+                      <option value="16.0">16 GB (Standard Worker Node)</option>
+                      <option value="32.0">32 GB (High-Memory Node)</option>
+                      <option value="64.0" selected>64 GB (Enterprise Host)</option>
+                      <option value="128.0">128 GB (Bare-Metal Cluster Node)</option>
+                    </select>
+                  </div>
+
+                  <div class="control-group flex-1">
+                    <div class="speed-header">
+                      <label class="ctrl-label">Animation Speed:</label>
+                      <span class="speed-val" id="speedLabel">Normal</span>
+                    </div>
+                    <input type="range" id="simSpeedSlider" min="100" max="1500" step="100" value="500" class="speed-slider">
                   </div>
                 </div>
 
-                <!-- ======================================================= -->
-                <!-- AVAILABLE WAREHOUSE INVENTORY (MANUAL SELECTION)       -->
-                <!-- ======================================================= -->
-                <div class="dash-card catalog-inventory-card" style="margin-top: 1.1rem;">
-                  <div class="dash-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-                    <div>
-                      <h3 class="dash-card-title">Available Microservice Pod Catalog</h3>
-                      <p class="dash-card-subtitle">Explore indexed cloud workloads with descriptive roles, specifications &amp; SLA utility</p>
-                    </div>
-                    <div style="display: flex; gap: 0.4rem; align-items: center;">
-                      <span class="badge-tag-mono" id="avlNodeCountBadge">21 workloads indexed</span>
-                      <button class="btn-xs btn-stark-white" id="btnOpenAddItemModal">+ Custom Pod</button>
-                    </div>
-                  </div>
-
-                  <!-- Real-time Filter & Search Bar -->
-                  <div class="inventory-filter-bar" style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap;">
-                    <div style="flex: 1; min-width: 170px;">
-                      <input type="text" id="catalogSearchInput" placeholder="🔍 Search workloads by pod name, category, or role description..." class="form-input" style="padding: 0.45rem 0.75rem; font-size: 0.78rem; width: 100%;">
-                    </div>
-                    <div class="category-filter-chips" id="categoryFilterChips" style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
-                      <!-- Dynamically rendered based on active catalog preset -->
-                    </div>
-                  </div>
-
-                  <!-- Available Items Grid -->
-                  <div class="catalog-list-scroll" style="max-height: 540px; overflow-y: auto; padding-right: 4px;">
-                    <div class="catalog-list" id="catalogItemsContainer">
-                      <!-- Dynamically rendered product cards -->
-                    </div>
-                  </div>
-                </div>
-
-                <!-- ======================================================= -->
-                <!-- Active Cluster Workload Allocations & Pod Staging               -->
-                <!-- ======================================================= -->
-                <div class="cart-table-card" style="margin-top: 1.1rem;">
-                  <div class="cart-table-header" style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                      <span class="table-title">Active Procurement Cart Manifest</span>
-                      <span style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">Items staged for 3D packaging &amp; dispatch</span>
-                    </div>
-                    <div class="table-actions">
-                      <button class="btn-xs btn-subtle" id="btnClearCart">Decommission All</button>
-                    </div>
-                  </div>
-
-                  <div class="table-scroll-wrap">
-                    <table class="modern-table">
-                      <thead>
-                        <tr>
-                          <th>Item</th>
-                          <th class="text-right">Price</th>
-                          <th class="text-right">Value</th>
-                          <th class="text-right">Weight</th>
-                          <th class="text-center">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody id="cartTableBody">
-                        <!-- Dynamic Cart Rows -->
-                      </tbody>
-                    </table>
-                    <div id="cartEmptyState" class="empty-state-card" style="display: none;">
-                      <p>Your procurement cart is empty. Click <strong>+ Add to Cart</strong> on any item above or <strong>Auto-Maximize Cart</strong> below to add items.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Knapsack Action Trigger -->
-                <div class="knapsack-trigger-bar">
-                  <div class="budget-input-inline">
-                    <label for="budgetInput">Spending Budget ($):</label>
-                    <input type="number" id="budgetInput" value="10000" min="100" max="100000" step="500" class="input-budget-field">
-                  </div>
-                  <button class="btn-stark-white" id="btnRunKnapsack">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                    Auto-Maximize Cart (0/1 Knapsack)
+                <!-- Playback Action Buttons -->
+                <div class="playback-buttons-row">
+                  <button class="btn-stark-white" id="btnPlayVisualizer">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    Run Visualizer
+                  </button>
+                  <button class="btn-secondary" id="btnStepVisualizer">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                    Step Forward
+                  </button>
+                  <button class="btn-secondary" id="btnResetVisualizer">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                    Reset
+                  </button>
+                  <button class="btn-stark-white ml-auto" id="btnProceedCheckout">
+                    Finalize Deployment &amp; Huffman Telemetry &rarr;
                   </button>
                 </div>
+              </div>
 
-                <!-- Insight Alert -->
-                <div class="opt-insight-pill" id="optInsightBanner" style="display: none;">
-                  <span class="opt-insight-icon">💡</span>
-                  <span class="opt-insight-text" id="optInsightText"></span>
-                </div>
-
-              </section>
-
-            </div>
-
-            <!-- RIGHT COLUMN: 3D WIREFRAME BIN PACKING VISUALIZER -->
-            <div class="dashboard-right-col">
-              
-              <section class="dash-card sticky-packer-card">
-                <div class="dash-card-header">
-                  <div>
-                    <h2 class="dash-card-title">Cluster Host Node Bin Packing Visualizer</h2>
-                    <p class="dash-card-subtitle">Host Compute Nodes (Capacity: <span id="dispBoxCapTag">64.0 GB RAM</span> • Minimizes Provisioned Servers)</p>
-                  </div>
-                  
-                  <div class="packer-meta-stats">
-                    <span class="badge-tag-mono" id="packerBoxCountBadge">0 Nodes Active</span>
-                    <span class="badge-tag-mono" id="packerCourierCostBadge">Node Spend: $0.00</span>
-                  </div>
-                </div>
-
-                <!-- 3D Wireframe Glass Bins Display Stage -->
-                <div class="bins-wireframe-stage" id="binsWireframeStage">
-                  <!-- Wireframe cartons rendered dynamically here -->
-                </div>
-
-                <!-- Item Queue / Unpacked Staging Area -->
-                <div class="queue-section">
-                  <div class="queue-title-row">
-                    <span class="queue-label">Item Queue & Staging (Unpacked Items):</span>
-                    <span class="queue-count" id="unpackedItemsCount">0 pending</span>
-                  </div>
-                  
-                  <div class="item-queue-container" id="itemQueueContainer">
-                    <!-- Dimensional blocks waiting to be packed -->
-                  </div>
-                </div>
-
-                <!-- Simulation & Controls -->
-                <div class="simulation-controls-card">
-                  <div class="controls-row">
-                    <div class="control-group">
-                      <label class="ctrl-label">Algorithm:</label>
-                      <select id="packerAlgoSelect" class="select-dropdown">
-                        <option value="FFD" selected>First-Fit Decreasing (FFD)</option>
-                        <option value="BFD">Best-Fit Decreasing (BFD)</option>
-                        <option value="WFD">Worst-Fit Decreasing (WFD)</option>
-                        <option value="NF">Next-Fit (Naive / Online)</option>
-                      </select>
-                    </div>
-
-                    <div class="control-group">
-                      <label class="ctrl-label">Host RAM Node Size:</label>
-                      <select id="boxCapacitySelect" class="select-dropdown">
-                        <option value="16.0">16 GB (Standard Worker Node)</option>
-                        <option value="32.0">32 GB (High-Memory Node)</option>
-                        <option value="64.0" selected>64 GB (Enterprise Host)</option>
-                        <option value="128.0">128 GB (Bare-Metal Cluster Node)</option>
-                      </select>
-                    </div>
-
-                    <div class="control-group flex-1">
-                      <div class="speed-header">
-                        <label class="ctrl-label">Animation Speed:</label>
-                        <span class="speed-val" id="speedLabel">Normal</span>
-                      </div>
-                      <input type="range" id="simSpeedSlider" min="100" max="1500" step="100" value="500" class="speed-slider">
-                    </div>
-                  </div>
-
-                  <!-- Playback Action Buttons -->
-                  <div class="playback-buttons-row">
-                    <button class="btn-stark-white" id="btnPlayVisualizer">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                      Run Visualizer
-                    </button>
-                    <button class="btn-secondary" id="btnStepVisualizer">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
-                      Step Forward
-                    </button>
-                    <button class="btn-secondary" id="btnResetVisualizer">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-                      Reset
-                    </button>
-                    <button class="btn-stark-white ml-auto" id="btnProceedCheckout">
-                      Finalize Order &rarr;
-                    </button>
-                  </div>
-                </div>
-
-              </section>
-
-            </div>
+            </section>
 
           </div>
 
