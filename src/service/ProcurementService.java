@@ -94,6 +94,24 @@ public class ProcurementService {
                     "Automated carrier gateway orchestrating transactional two-factor verification codes and urgent margin call alerts."));
             addItemToCatalog(new Item("F19", "Automated Billing & FinOps Collector", "Async Workers", 160.0, 81, 5.0,
                     "Background worker aggregating hourly cluster resource usage, calculating spot instance savings, and generating billing manifests."));
+
+            // 8. Heavy Institutional FinOps & Cloud Workloads
+            addItemToCatalog(new Item("F20", "FPGA Accelerated Co-Location Gateway", "Trading Engines", 3800.0, 100, 32.0,
+                    "Ultra-low latency FPGA PCIe card deployed at exchange co-location facilities processing tick-to-trade in under 120 nanoseconds."));
+            addItemToCatalog(new Item("F21", "Institutional Tier-1 Liquidity Core", "Trading Engines", 2800.0, 99, 44.0,
+                    "Smart order routing (SOR) core streaming live market depth across 40+ ECNs, dark pools, and multi-asset electronic venues."));
+            addItemToCatalog(new Item("F22", "Distributed GPU Monte Carlo Risk Engine", "Risk & Ledger", 2500.0, 98, 56.0,
+                    "CUDA-accelerated parallel Monte Carlo simulation grid running 500M portfolio stress scenarios per minute for intraday margin checks."));
+            addItemToCatalog(new Item("F23", "Multi-Cloud SWIFT Clearinghouse Node", "Risk & Ledger", 2100.0, 97, 28.0,
+                    "ISO 20022 compliant interbank messaging core with end-to-end hardware encryption and real-time gross settlement (RTGS) reconciliation."));
+            addItemToCatalog(new Item("F24", "Enterprise Quantum-Resistant Vault", "Security & Vault", 1900.0, 98, 16.0,
+                    "Post-quantum Kyber/Dilithium cryptographic key storage securing institutional multi-sig treasury wallets."));
+            addItemToCatalog(new Item("F25", "Deep Learning Alpha Signal Generator", "AI & LLMs", 2200.0, 96, 40.0,
+                    "Recurrent transformer neural network ingesting alternative feeds, satellite telemetry, and sentiment signals for predictive alpha generation."));
+            addItemToCatalog(new Item("F26", "Aerospike Multi-Region Enterprise Cluster", "Databases", 1800.0, 95, 36.0,
+                    "Cross-datacenter replication (XDR) NoSQL cluster providing sub-millisecond writes for active high-frequency order book positions."));
+            addItemToCatalog(new Item("F27", "Distributed Global Market Replay Engine", "Databases", 1600.0, 93, 32.0,
+                    "Time-travel market simulation cluster replaying nanosecond-resolution order books for quantitative algorithmic backtesting."));
         } else {
             // Preset 1 (Default): Enterprise Kubernetes Microservices & APIs
             // 1. Databases (3 items)
@@ -151,6 +169,38 @@ public class ProcurementService {
                     "Automated code quality and security vulnerability gate analyzing code smells, coverage regressions, and OWASP compliance."));
             addItemToCatalog(new Item("K21", "Docker Registry Private Cache", "DevOps & CI/CD", 90.0, 72, 4.0,
                     "Geo-replicated container image caching mirror reducing node pull latencies and upstream Docker Hub throttling limits."));
+
+            // 8. Heavy Enterprise Cloud & AI Infrastructure (High-Capacity FinOps Tier)
+            addItemToCatalog(new Item("K22", "NVIDIA H100 8-GPU Distributed Training Pod", "AI & Analytics", 3400.0, 99, 56.0,
+                    "Enterprise hardware-accelerated transformer model training cluster with NVLink 900 GB/s inter-GPU fabric and FP8 tensor execution."));
+            addItemToCatalog(new Item("K23", "Multi-Region CockroachDB Global Cluster", "Databases", 2600.0, 99, 48.0,
+                    "Distributed geo-replicated SQL database providing serializable ACID transactions, Raft consensus, and zero-downtime multi-cloud survivability."));
+            addItemToCatalog(new Item("K24", "Confluent Enterprise Multi-Zone Kafka Hub", "Messaging", 2250.0, 98, 40.0,
+                    "Enterprise event streaming backbone with Tiered Storage, multi-datacenter cluster linking, and 24/7 SLA partition balancing."));
+            addItemToCatalog(new Item("K25", "vLLM High-Throughput Inference Cluster", "AI & Analytics", 2100.0, 97, 44.0,
+                    "Distributed PagedAttention LLM inference serving engine hosting 70B parameter models with dynamic continuous request batching."));
+            addItemToCatalog(new Item("K26", "Snowflake Iceberg Managed Lakehouse Engine", "Databases", 1950.0, 96, 36.0,
+                    "Serverless columnar analytical query engine operating over Apache Iceberg open table formats on high-throughput object storage."));
+            addItemToCatalog(new Item("K27", "Dedicated Hardware Security Module (HSM) Vault", "Security", 1850.0, 98, 16.0,
+                    "FIPS 140-2 Level 3 certified cryptographic key protection engine with tamper-evident zero-trust hardware boundaries."));
+            addItemToCatalog(new Item("K28", "Cloudflare Magic WAN Enterprise Transit Hub", "APIs & Gateways", 1750.0, 96, 24.0,
+                    "Global Layer-3/4 Anycast interconnect providing DDoS mitigation, dynamic multi-cloud route optimization, and private WAN links."));
+            addItemToCatalog(new Item("K29", "ScyllaDB Enterprise Low-Latency Ring", "Databases", 1650.0, 95, 36.0,
+                    "C++ re-write of Cassandra utilizing seastar asynchronous architecture to process millions of IOPS with sub-millisecond P99 latency."));
+            addItemToCatalog(new Item("K30", "HA Kubernetes Dedicated Control Plane", "DevOps & CI/CD", 1550.0, 99, 28.0,
+                    "Triple-redundant etcd quorum and Kubernetes API server farm with automated snapshots and leader-election health loops."));
+            addItemToCatalog(new Item("K31", "ClickHouse Real-Time OLAP Analytics Node", "Observability", 1450.0, 94, 32.0,
+                    "Column-oriented DBMS designed for blazingly fast SQL analytics queries over petabyte-scale application log streams."));
+            addItemToCatalog(new Item("K32", "Ray Distributed AI Orchestrator Node", "AI & Analytics", 1450.0, 94, 30.0,
+                    "Unified compute framework for scaling Python-based machine learning pipelines, multi-node hyperparameter tuning, and model checkpoints."));
+            addItemToCatalog(new Item("K33", "Apache Flink Distributed State Processor", "Messaging", 1400.0, 93, 28.0,
+                    "Event-driven stream analytics engine with RocksDB state backend processing sliding window aggregations at multi-gigabit throughput."));
+            addItemToCatalog(new Item("K34", "Palo Alto Prisma SASE Zero-Trust Gateway", "Security", 1350.0, 92, 24.0,
+                    "Enterprise cloud-native secure access service edge combining SD-WAN with continuous authentication and threat prevention."));
+            addItemToCatalog(new Item("K35", "GitLab Dedicated Enterprise CI Runner Farm", "DevOps & CI/CD", 1250.0, 91, 32.0,
+                    "Autoscaling container build farm with local caching proxies, Docker-in-Docker daemons, and automated artifact validation."));
+            addItemToCatalog(new Item("K36", "Datadog Enterprise Unified Telemetry Aggregator", "Observability", 1150.0, 92, 20.0,
+                    "Unified multi-cloud telemetry pipeline ingesting distributed traces, APM metrics, continuous profiling, and synthetic monitors."));
         }
 
         // Initialize active deployment cart with balanced foundational microservices
