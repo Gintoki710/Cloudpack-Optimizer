@@ -1,5 +1,5 @@
 # ==========================================================
-# Auto Git Sync - Pack & Plan
+# Auto Git Sync - CloudPack Optimizer
 # Automatically commits and pushes local code changes to GitHub,
 # and periodically checks for remote changes.
 # ==========================================================
@@ -13,7 +13,7 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 Set-Location $scriptDir
 
 Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host "   DSA PROJECT - AUTOMATIC GITHUB TWO-WAY SYNC WATCHER   " -ForegroundColor Cyan
+Write-Host "   CLOUDPACK OPTIMIZER - AUTOMATIC GITHUB TWO-WAY SYNC   " -ForegroundColor Cyan
 Write-Host "==========================================================" -ForegroundColor Cyan
 Write-Host "Watching directory: $scriptDir" -ForegroundColor Gray
 Write-Host "Target Remote: origin/$Branch" -ForegroundColor Gray
