@@ -29,6 +29,8 @@ public class SimpleJson {
 
         if (obj instanceof String) {
             escapeString((String) obj, sb);
+        } else if (obj instanceof Enum<?>) {
+            escapeString(((Enum<?>) obj).name(), sb);
         } else if (obj instanceof Number || obj instanceof Boolean) {
             sb.append(obj.toString());
         } else if (obj instanceof Character) {
