@@ -373,7 +373,7 @@
                 <!-- Knapsack Action Trigger -->
                 <div class="knapsack-trigger-bar">
                   <div class="budget-input-inline">
-                    <label for="budgetInput">Spending Budget (₹):</label>
+                    <label for="budgetInput">Spending Budget ($):</label>
                     <input type="number" id="budgetInput" value="10000" min="100" max="100000" step="500" class="input-budget-field">
                   </div>
                   <button class="btn-stark-white" id="btnRunKnapsack">
@@ -398,13 +398,13 @@
               <section class="dash-card sticky-packer-card">
                 <div class="dash-card-header">
                   <div>
-                    <h2 class="dash-card-title">Algorithmic Bin Packing Visualizer</h2>
-                    <p class="dash-card-subtitle">3D Warehouse Cartons (Capacity: <span id="dispBoxCapTag">10.0 kg</span> • Minimizes Courier Fee)</p>
+                    <h2 class="dash-card-title">Cluster Host Node Bin Packing Visualizer</h2>
+                    <p class="dash-card-subtitle">Host Compute Nodes (Capacity: <span id="dispBoxCapTag">64.0 GB RAM</span> • Minimizes Provisioned Servers)</p>
                   </div>
                   
                   <div class="packer-meta-stats">
-                    <span class="badge-tag-mono" id="packerBoxCountBadge">0 Dispatched</span>
-                    <span class="badge-tag-mono" id="packerCourierCostBadge">Courier: ₹0.00</span>
+                    <span class="badge-tag-mono" id="packerBoxCountBadge">0 Nodes Active</span>
+                    <span class="badge-tag-mono" id="packerCourierCostBadge">Node Spend: $0.00</span>
                   </div>
                 </div>
 
@@ -441,10 +441,10 @@
                     <div class="control-group">
                       <label class="ctrl-label">Host RAM Node Size:</label>
                       <select id="boxCapacitySelect" class="select-dropdown">
-                        <option value="5.0">5 kg (Small Carton)</option>
-                        <option value="10.0" selected>10 kg (Standard Carton)</option>
-                        <option value="15.0">15 kg (Heavy Duty)</option>
-                        <option value="20.0">20 kg (Bulk Freight)</option>
+                        <option value="16.0">16 GB (Standard Worker Node)</option>
+                        <option value="32.0">32 GB (High-Memory Node)</option>
+                        <option value="64.0" selected>64 GB (Enterprise Host)</option>
+                        <option value="128.0">128 GB (Bare-Metal Cluster Node)</option>
                       </select>
                     </div>
 
@@ -504,12 +504,12 @@
               <div class="stat-box">
                 <span class="stat-box-title">DP Optimal SLA Throughput</span>
                 <span class="stat-box-num" id="ksDpUtility">0 pts</span>
-                <span class="stat-box-sub" id="ksDpCost">Total Spend: ₹0.00</span>
+                <span class="stat-box-sub" id="ksDpCost">Total Spend: $0.00</span>
               </div>
               <div class="stat-box">
                 <span class="stat-box-title">Greedy Ratio SLA Throughput</span>
                 <span class="stat-box-num text-muted" id="ksGreedyUtility">0 pts</span>
-                <span class="stat-box-sub" id="ksGreedyCost">Total Spend: ₹0.00</span>
+                <span class="stat-box-sub" id="ksGreedyCost">Total Spend: $0.00</span>
               </div>
               <div class="stat-box">
                 <span class="stat-box-title">Optimality Gap (DP vs Greedy)</span>
