@@ -457,6 +457,8 @@ document.addEventListener('DOMContentLoaded', () => {
       filtered = filtered.filter(it => 
         (it.name && it.name.toLowerCase().includes(term)) ||
         (it.category && it.category.toLowerCase().includes(term)) ||
+        (it.description && it.description.toLowerCase().includes(term)) ||
+        (it.id && it.id.toLowerCase().includes(term)) ||
         (String(it.price).includes(term))
       );
     }
