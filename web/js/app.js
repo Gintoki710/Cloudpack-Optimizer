@@ -199,6 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
     formAddCatalogItem: document.getElementById('formAddCatalogItem'),
     modalItemName: document.getElementById('modalItemName'),
     modalItemCategory: document.getElementById('modalItemCategory'),
+    modalItemDesc: document.getElementById('modalItemDesc'),
     modalItemPrice: document.getElementById('modalItemPrice'),
     modalItemUtility: document.getElementById('modalItemUtility'),
     modalItemWeight: document.getElementById('modalItemWeight')
