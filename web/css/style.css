@@ -2676,35 +2676,71 @@ body.app-body,
 }
 
 [data-theme="light"] .catalog-item-card:hover {
-  border-color: #cbd5e1;
+  border-color: #38bdf8;
   background: #f8fafc;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
 }
 
-[data-theme="light"] .item-card-name {
+[data-theme="light"] .item-card-title {
   color: #0f172a;
 }
 
-[data-theme="light"] .item-card-cat {
-  background: #f1f5f9;
+[data-theme="light"] .item-card-desc {
   color: #475569;
 }
 
-[data-theme="light"] .item-card-price {
-  color: #0f172a;
+[data-theme="light"] .item-card-id-badge {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #e2e8f0;
 }
 
-[data-theme="light"] .item-card-actions {
+[data-theme="light"] .item-card-cat {
+  background: rgba(14, 165, 233, 0.1);
+  color: #0284c7;
+  border-color: rgba(14, 165, 233, 0.25);
+}
+
+[data-theme="light"] .spec-pill {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+[data-theme="light"] .spec-ram {
+  color: #0284c7;
+}
+
+[data-theme="light"] .spec-sla {
+  color: #059669;
+}
+
+[data-theme="light"] .item-card-footer {
   border-top-color: #f1f5f9;
 }
 
-[data-theme="light"] .btn-add-cart {
-  background: #f1f5f9;
+[data-theme="light"] .item-card-price-box .price-val {
   color: #0f172a;
-  border-color: #cbd5e1;
+}
+
+[data-theme="light"] .item-card-price-box .price-unit {
+  color: #64748b;
+}
+
+[data-theme="light"] .btn-add-cart {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
 }
 
 [data-theme="light"] .btn-add-cart:hover {
-  background: #0f172a;
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+}
+
+[data-theme="light"] .btn-add-cart.added {
+  background: #059669;
+  border-color: #059669;
   color: #ffffff;
 }
 
