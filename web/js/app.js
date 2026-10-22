@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     courierFee: 120.0,
     activePreset: 'ENTERPRISE_K8S',
     activeTab: 'tab-dashboard',
+    dashboardMode: 'knapsack',
     selectedCategory: 'ALL',
     searchKeyword: '',
     
@@ -73,6 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
     dispCartCost: document.getElementById('dispCartCost'),
     dispCartUtility: document.getElementById('dispCartUtility'),
     dispRemainingBudget: document.getElementById('dispRemainingBudget'),
+    btnModeKnapsack: document.getElementById('btnModeKnapsack'),
+    btnModeBinpack: document.getElementById('btnModeBinpack'),
+    modeStatusText: document.getElementById('modeStatusText'),
+    dashboardKnapsackView: document.getElementById('dashboardKnapsackView'),
+    dashboardBinpackView: document.getElementById('dashboardBinpackView'),
     btnToggleDp: document.getElementById('btnToggleDp'),
     btnToggleGreedy: document.getElementById('btnToggleGreedy'),
     categoryDonutSvg: document.getElementById('categoryDonutSvg'),
@@ -216,6 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function init() {
     setupThemeToggle();
+    setupDashboardModeSwitcher();
     setupSidebarNavigation();
     setupScenarioSwitching();
     setupCatalogFilter();
@@ -579,18 +586,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Toggle: DP vs Greedy
-    el.btnToggleDp.addEventListener('click', () => {
-      el.btnToggleDp.classList.add('active');
-      el.btnToggleGreedy.classList.remove('active');
-      el.btnRunKnapsack.click();
-    });
-
-    el.btnToggleGreedy.addEventListener('click', async () => {
-      el.btnToggleGreedy.classList.add('active');
-      el.btnToggleDp.classList.remove('active');
-      addLog('[Knapsack Heuristic] Switched to Greedy density ratio selection (Suboptimal)', 'amber');
-    });
+    // Dashboard utilizes strictly globally-optimal 0/1 Knapsack DP
   }
 
 
@@ -629,6 +625,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const activeDef = cards.find(c => c.code === algo);
     if (el.hostNodeSectionTitle && activeDef) {
       el.hostNodeSectionTitle.textContent = `Consolidated Bare-Metal Host Node Allocation (${activeDef.name})`;
+    }
+  }
+
+
+  // Dashboard Mode Switcher Controller (Knapsack FinOps vs 3D Bin Packing)
+
+  function setupDashboardModeSwitcher() {
+    function switchDashboardMode(mode) {
+      state.dashboardMode = mode;
+      if (mode === 'binpack') {
+        if (el.btnModeBinpack) el.btnModeBinpack.classList.add('active');
+        if (el.btnModeKnapsack) el.btnModeKnapsack.classList.remove('active');
+        if (el.dashboardBinpackView) el.dashboardBinpackView.style.display = 'flex';
+        if (el.dashboardKnapsackView) el.dashboardKnapsackView.style.display = 'none';
+        if (el.modeStatusText) el.modeStatusText.textContent = 'Host Node Bin Packing Visualizer & 3D Server Allocations';
+        addLog('[Dashboard View] Switched to 3D Host Node Bin Packing stage (Catalog hidden)', 'cyan');
+        triggerBinPacking();
+      } else {
+        if (el.btnModeKnapsack) el.btnModeKnapsack.classList.add('active');
+        if (el.btnModeBinpack) el.btnModeBinpack.classList.remove('active');
+        if (el.dashboardKnapsackView) el.dashboardKnapsackView.style.display = 'flex';
+        if (el.dashboardBinpackView) el.dashboardBinpackView.style.display = 'none';
+        if (el.modeStatusText) el.modeStatusText.textContent = '0/1 Knapsack Workload Planner (Catalog & Allocations)';
+        addLog('[Dashboard View] Switched to 0/1 Knapsack Workload Planner & Catalog', 'cyan');
+      }
+    }
+
+    if (el.btnModeKnapsack) {
+      el.btnModeKnapsack.addEventListener('click', () => switchDashboardMode('knapsack'));
+    }
+    if (el.btnModeBinpack) {
+      el.btnModeBinpack.addEventListener('click', () => switchDashboardMode('binpack'));
     }
   }
 
@@ -1004,9 +1032,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!packingData || !packingData.boxes || packingData.boxes.length === 0) {
       el.binsWireframeStage.innerHTML = `
         <div class="empty-state-card" style="grid-column: span 3; padding: 2.5rem 1rem;">
-          <p style="color: var(--text-muted); margin-bottom: 0.85rem; font-size: 0.82rem;">Your cart is empty. Add items from the catalog on the left to pack 3D cartons.</p>
+          <p style="color: var(--text-muted); margin-bottom: 0.85rem; font-size: 0.82rem;">Your cluster allocation is empty. Deploy microservices from the catalog or auto-schedule with Knapsack DP.</p>
           <button class="btn-stark-white" id="btnPopulateCartPrompt" style="margin: 0 auto;">
-            ⚡ Auto-Maximize Cart (0/1 Knapsack)
+            ⚡ Auto-Maximize Workloads (0/1 Knapsack DP)
           </button>
         </div>
       `;
