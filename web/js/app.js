@@ -1254,38 +1254,68 @@ document.addEventListener('DOMContentLoaded', () => {
     items.forEach(it => {
       const card = document.createElement('div');
       card.className = 'catalog-item-card';
+      const desc = it.description || 'High-availability containerized cloud microservice with automated autoscaling and health probing.';
+      const ramVal = (typeof it.weight === 'number') ? it.weight.toFixed(1) : it.weight;
+      const costVal = Math.round(it.price).toLocaleString();
+
       card.innerHTML = `
-        <div class="item-card-top">
-          <span class="item-card-name" title="${it.name}">${it.name}</span>
+        <div class="item-card-header">
+          <span class="item-card-id-badge">${it.id || 'POD'}</span>
           <span class="item-card-cat">${it.category || 'General'}</span>
         </div>
-        <div class="item-card-meta">
-          <span>Priority: <strong style="color: var(--accent-neon-green)">+${it.utility} pts</strong></span>
-          <span>Weight: <strong>${it.weight} kg</strong></span>
+        <h4 class="item-card-title" title="${it.name}">${it.name}</h4>
+        <p class="item-card-desc">${desc}</p>
+        <div class="item-card-specs-row">
+          <span class="spec-pill spec-ram" title="Container Memory Footprint">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2" ry="2"/><line x1="6" y1="18" x2="6" y2="18.01"/><line x1="10" y1="18" x2="10" y2="18.01"/><line x1="14" y1="18" x2="14" y2="18.01"/><line x1="18" y1="18" x2="18" y2="18.01"/></svg>
+            <strong>${ramVal} GB RAM</strong>
+          </span>
+          <span class="spec-pill spec-sla" title="Service Level Agreement Score">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <strong>+${it.utility} pts SLA</strong>
+          </span>
         </div>
-        <div class="item-card-actions">
-          <span class="item-card-price">₹${Math.round(it.price).toLocaleString()}</span>
-          <button class="btn-xs btn-stark-white btn-add-cart" data-id="${it.id}">+ Deploy Pod</button>
+        <div class="item-card-footer">
+          <div class="item-card-price-box">
+            <span class="price-val">$${costVal}</span>
+            <span class="price-unit">/ mo</span>
+          </div>
+          <button class="btn-sm btn-stark-white btn-add-cart" data-id="${it.id}">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Deploy Pod
+          </button>
         </div>
       `;
 
       const btnAdd = card.querySelector('.btn-add-cart');
       btnAdd.addEventListener('click', async () => {
         try {
-          btnAdd.textContent = 'Deploying...';
+          btnAdd.innerHTML = `
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            Deploying...
+          `;
           btnAdd.disabled = true;
           await apiPost('/api/cart/add', { itemId: it.id });
-          addLog(`[Cluster Action] Manually deployed "${it.name}" (₹${it.price}, ${it.weight}kg, +${it.utility}pts)`, 'white');
+          addLog(`[Cluster Action] Manually scheduled "${it.name}" ($${costVal}/mo, ${ramVal}GB RAM, +${it.utility}pts SLA)`, 'white');
           await fetchCart();
           await triggerBinPacking();
-          btnAdd.textContent = 'Added ✓';
+          btnAdd.innerHTML = `
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Scheduled ✓
+          `;
           setTimeout(() => {
-            btnAdd.textContent = '+ Deploy Pod';
+            btnAdd.innerHTML = `
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Deploy Pod
+            `;
             btnAdd.disabled = false;
           }, 900);
         } catch (err) {
           console.error('Failed to add item to cart:', err);
-          btnAdd.textContent = '+ Deploy Pod';
+          btnAdd.innerHTML = `
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Deploy Pod
+          `;
           btnAdd.disabled = false;
         }
       });
