@@ -44,73 +44,113 @@ public class ProcurementService {
         if ("FINTECH_AI_CLOUD".equalsIgnoreCase(presetKey)) {
             // Preset 2: High-Frequency Trading & AI Cloud Workloads
             // 1. Trading Engines (3 items)
-            addItemToCatalog(new Item("F01", "Ultra-Low Latency Order Matcher", "Trading Engines", 650.0, 99, 28.0));
-            addItemToCatalog(new Item("F02", "FIX Protocol Gateway Bridge", "Trading Engines", 380.0, 92, 12.0));
-            addItemToCatalog(new Item("F03", "Market Data WebSocket Feed", "Trading Engines", 290.0, 88, 8.0));
+            addItemToCatalog(new Item("F01", "Ultra-Low Latency Order Matcher", "Trading Engines", 650.0, 99, 28.0,
+                    "C++ kernel-bypass order matching core processing Level-3 market depth with deterministic sub-microsecond tick execution."));
+            addItemToCatalog(new Item("F02", "FIX Protocol Gateway Bridge", "Trading Engines", 380.0, 92, 12.0,
+                    "Institutional trading connector managing standardized FIX protocol sessions, heartbeat monitoring, and drop-copy routing."));
+            addItemToCatalog(new Item("F03", "Market Data WebSocket Feed", "Trading Engines", 290.0, 88, 8.0,
+                    "High-concurrency streaming fanout engine distributing live order book quotes to tens of thousands of active trading clients."));
 
             // 2. AI & LLMs (3 items)
-            addItemToCatalog(new Item("F04", "Llama-3 8B Quantized Inference Pod", "AI & LLMs", 540.0, 97, 24.0));
-            addItemToCatalog(new Item("F05", "LangChain RAG Vector Embeddings DB", "AI & LLMs", 360.0, 90, 16.0));
-            addItemToCatalog(new Item("F06", "Whisper Speech Transcription Worker", "AI & LLMs", 220.0, 84, 10.0));
+            addItemToCatalog(new Item("F04", "Llama-3 8B Quantized Inference Pod", "AI & LLMs", 540.0, 97, 24.0,
+                    "Hardware-accelerated transformer model inference serving contextual enterprise chat, code completion, and summarization."));
+            addItemToCatalog(new Item("F05", "LangChain RAG Vector Embeddings DB", "AI & LLMs", 360.0, 90, 16.0,
+                    "High-dimensional vector similarity search database indexing corporate knowledge bases with cosine distance pruning."));
+            addItemToCatalog(new Item("F06", "Whisper Speech Transcription Worker", "AI & LLMs", 220.0, 84, 10.0,
+                    "Asynchronous audio processing queue converting call recordings and voice queries into timestamped text transcripts."));
 
             // 3. Risk & Ledger (3 items)
-            addItemToCatalog(new Item("F07", "Distributed Double-Entry Ledger", "Risk & Ledger", 410.0, 95, 16.0));
-            addItemToCatalog(new Item("F08", "Real-Time Risk Calculation Daemon", "Risk & Ledger", 470.0, 96, 20.0));
-            addItemToCatalog(new Item("F09", "KYC & Anti-Money Laundering Pod", "Risk & Ledger", 260.0, 86, 8.0));
+            addItemToCatalog(new Item("F07", "Distributed Double-Entry Ledger", "Risk & Ledger", 410.0, 95, 16.0,
+                    "Cryptographically verified immutable accounting ledger recording multi-currency balance transitions with ACID compliance."));
+            addItemToCatalog(new Item("F08", "Real-Time Risk Calculation Daemon", "Risk & Ledger", 470.0, 96, 20.0,
+                    "Streaming Value-at-Risk (VaR) calculation engine monitoring margin requirements and exposure limits across portfolios."));
+            addItemToCatalog(new Item("F09", "KYC & Anti-Money Laundering Pod", "Risk & Ledger", 260.0, 86, 8.0,
+                    "Automated compliance screener evaluating transaction counterparties against global sanctions registries in real time."));
 
             // 4. Databases & In-Memory (3 items)
-            addItemToCatalog(new Item("F10", "TimescaleDB Financial Time-Series", "Databases", 330.0, 91, 14.0));
-            addItemToCatalog(new Item("F11", "Aerospike Ultra-Fast NoSQL Cluster", "Databases", 490.0, 94, 22.0));
-            addItemToCatalog(new Item("F12", "Cassandra Write-Heavy Audit Store", "Databases", 380.0, 89, 16.0));
+            addItemToCatalog(new Item("F10", "TimescaleDB Financial Time-Series", "Databases", 330.0, 91, 14.0,
+                    "PostgreSQL extension optimized for fast ingest of millions of financial market ticks and automated hypertable compression."));
+            addItemToCatalog(new Item("F11", "Aerospike Ultra-Fast NoSQL Cluster", "Databases", 490.0, 94, 22.0,
+                    "Hybrid memory architecture NoSQL database providing predictable sub-millisecond read/write access for real-time risk state."));
+            addItemToCatalog(new Item("F12", "Cassandra Write-Heavy Audit Store", "Databases", 380.0, 89, 16.0,
+                    "Masterless partitioned key-space store built for high-throughput write-heavy regulatory trading activity archives."));
 
             // 5. Edge & Networking (2 items)
-            addItemToCatalog(new Item("F13", "Envoy Global Service Mesh Proxy", "Edge & Network", 190.0, 87, 6.0));
-            addItemToCatalog(new Item("F14", "BGP Anycast Edge Route Optimizer", "Edge & Network", 240.0, 85, 4.0));
+            addItemToCatalog(new Item("F13", "Envoy Global Service Mesh Proxy", "Edge & Network", 190.0, 87, 6.0,
+                    "High-performance L7 communication proxy providing mutual TLS (mTLS), circuit breaking, and distributed tracing."));
+            addItemToCatalog(new Item("F14", "BGP Anycast Edge Route Optimizer", "Edge & Network", 240.0, 85, 4.0,
+                    "Global border gateway protocol routing daemon optimizing network paths to financial exchange co-location facilities."));
 
             // 6. Compliance & Vault (2 items)
-            addItemToCatalog(new Item("F15", "Hardware Security Module (HSM) Pod", "Security & Vault", 520.0, 98, 8.0));
-            addItemToCatalog(new Item("F16", "PCI-DSS Continuous Audit Collector", "Security & Vault", 180.0, 82, 4.0));
+            addItemToCatalog(new Item("F15", "Hardware Security Module (HSM) Pod", "Security & Vault", 520.0, 98, 8.0,
+                    "FIPS 140-2 Level 3 certified cryptographic key protection engine performing digital signatures on high-value settlements."));
+            addItemToCatalog(new Item("F16", "PCI-DSS Continuous Audit Collector", "Security & Vault", 180.0, 82, 4.0,
+                    "Automated infrastructure scanner ensuring payment card compliance, network segmentation, and access policy auditing."));
 
             // 7. Notification & Delivery (3 items)
-            addItemToCatalog(new Item("F17", "High-Throughput Push Notification Worker", "Async Workers", 140.0, 78, 4.0));
-            addItemToCatalog(new Item("F18", "SMS & Multi-Channel Alert Dispatcher", "Async Workers", 120.0, 76, 3.0));
-            addItemToCatalog(new Item("F19", "Automated Billing & FinOps Collector", "Async Workers", 160.0, 81, 5.0));
+            addItemToCatalog(new Item("F17", "High-Throughput Push Notification Worker", "Async Workers", 140.0, 78, 4.0,
+                    "Scalable WebSocket and APNS dispatcher delivering sub-second price alerts and execution notifications to active mobile devices."));
+            addItemToCatalog(new Item("F18", "SMS & Multi-Channel Alert Dispatcher", "Async Workers", 120.0, 76, 3.0,
+                    "Automated carrier gateway orchestrating transactional two-factor verification codes and urgent margin call alerts."));
+            addItemToCatalog(new Item("F19", "Automated Billing & FinOps Collector", "Async Workers", 160.0, 81, 5.0,
+                    "Background worker aggregating hourly cluster resource usage, calculating spot instance savings, and generating billing manifests."));
         } else {
             // Preset 1 (Default): Enterprise Kubernetes Microservices & APIs
             // 1. Databases (3 items)
-            addItemToCatalog(new Item("K01", "PostgreSQL High-Availability Cluster", "Databases", 340.0, 95, 16.0));
-            addItemToCatalog(new Item("K02", "MongoDB Sharded Replica Set", "Databases", 280.0, 89, 12.0));
-            addItemToCatalog(new Item("K03", "Redis Distributed Cache Cluster", "Databases", 140.0, 82, 8.0));
+            addItemToCatalog(new Item("K01", "PostgreSQL High-Availability Cluster", "Databases", 340.0, 95, 16.0,
+                    "Primary transactional SQL database with automated multi-AZ replication, connection pooling, and sub-millisecond recovery."));
+            addItemToCatalog(new Item("K02", "MongoDB Sharded Replica Set", "Databases", 280.0, 89, 12.0,
+                    "Distributed NoSQL document database configured with 3-node replica sets for flexible schema storage and high read concurrency."));
+            addItemToCatalog(new Item("K03", "Redis Distributed Cache Cluster", "Databases", 140.0, 82, 8.0,
+                    "In-memory key-value data store providing sub-millisecond session caching, pub/sub channels, and atomic rate limiter counters."));
 
             // 2. APIs & Gateways (3 items)
-            addItemToCatalog(new Item("K04", "Kong Enterprise API Gateway", "APIs & Gateways", 190.0, 92, 6.0));
-            addItemToCatalog(new Item("K05", "OAuth2 JWT Identity Microservice", "APIs & Gateways", 110.0, 86, 4.0));
-            addItemToCatalog(new Item("K06", "GraphQL Federation Mesh Router", "APIs & Gateways", 150.0, 88, 5.0));
+            addItemToCatalog(new Item("K04", "Kong Enterprise API Gateway", "APIs & Gateways", 190.0, 92, 6.0,
+                    "Cloud-native reverse proxy handling traffic routing, dynamic TLS termination, automated rate-limiting, and consumer authentication."));
+            addItemToCatalog(new Item("K05", "OAuth2 JWT Identity Microservice", "APIs & Gateways", 110.0, 86, 4.0,
+                    "Centralized zero-trust authentication service handling token minting, RBAC authorization claims, and SSO federated login."));
+            addItemToCatalog(new Item("K06", "GraphQL Federation Mesh Router", "APIs & Gateways", 150.0, 88, 5.0,
+                    "Unified declarative API gateway composing distributed subgraphs into a unified endpoint with automated query plan caching."));
 
             // 3. Messaging & Streaming (3 items)
-            addItemToCatalog(new Item("K07", "Apache Kafka 3-Node Event Broker", "Messaging", 420.0, 96, 20.0));
-            addItemToCatalog(new Item("K08", "RabbitMQ Distributed Task Queue", "Messaging", 160.0, 84, 6.0));
-            addItemToCatalog(new Item("K09", "NATS JetStream Telemetry Broker", "Messaging", 120.0, 78, 4.0));
+            addItemToCatalog(new Item("K07", "Apache Kafka 3-Node Event Broker", "Messaging", 420.0, 96, 20.0,
+                    "High-throughput fault-tolerant distributed streaming platform processing 500,000+ events/sec across persistent partitioned commit logs."));
+            addItemToCatalog(new Item("K08", "RabbitMQ Distributed Task Queue", "Messaging", 160.0, 84, 6.0,
+                    "AMQP message broker ensuring reliable asynchronous background task scheduling with dead-letter exchange handling."));
+            addItemToCatalog(new Item("K09", "NATS JetStream Telemetry Broker", "Messaging", 120.0, 78, 4.0,
+                    "Ultra-lightweight cloud event streaming engine providing sub-millisecond pub/sub messaging for distributed IoT and edge agents."));
 
             // 4. AI & Analytics (3 items)
-            addItemToCatalog(new Item("K10", "Real-Time Fraud Detection Engine", "AI & Analytics", 480.0, 98, 24.0));
-            addItemToCatalog(new Item("K11", "Apache Spark Analytics Worker Pod", "AI & Analytics", 320.0, 87, 16.0));
-            addItemToCatalog(new Item("K12", "TensorFlow Serving Prediction API", "AI & Analytics", 390.0, 91, 18.0));
+            addItemToCatalog(new Item("K10", "Real-Time Fraud Detection Engine", "AI & Analytics", 480.0, 98, 24.0,
+                    "Low-latency streaming machine learning pipeline evaluating financial transaction anomalies against behavioral scoring models under 5ms."));
+            addItemToCatalog(new Item("K11", "Apache Spark Analytics Worker Pod", "AI & Analytics", 320.0, 87, 16.0,
+                    "Distributed big data processing pod executing distributed parallel batch transformations and iterative matrix calculations."));
+            addItemToCatalog(new Item("K12", "TensorFlow Serving Prediction API", "AI & Analytics", 390.0, 91, 18.0,
+                    "High-concurrency deep learning inference service optimized with TensorRT GPU acceleration and dynamic request batching."));
 
             // 5. Observability & Logs (3 items)
-            addItemToCatalog(new Item("K13", "Elasticsearch Search & Index Pod", "Observability", 290.0, 88, 14.0));
-            addItemToCatalog(new Item("K14", "Prometheus Metrics Time-Series DB", "Observability", 180.0, 85, 8.0));
-            addItemToCatalog(new Item("K15", "Grafana Dashboard & Alerting Pod", "Observability", 85.0, 74, 2.0));
+            addItemToCatalog(new Item("K13", "Elasticsearch Search & Index Pod", "Observability", 290.0, 88, 14.0,
+                    "Distributed Lucene-powered search engine providing full-text search, distributed indexing, and real-time log ingestion."));
+            addItemToCatalog(new Item("K14", "Prometheus Metrics Time-Series DB", "Observability", 180.0, 85, 8.0,
+                    "High-frequency time-series scrape collector recording multi-dimensional metrics with PromQL alerting rules."));
+            addItemToCatalog(new Item("K15", "Grafana Dashboard & Alerting Pod", "Observability", 85.0, 74, 2.0,
+                    "Interactive cloud visualization server rendering real-time operational telemetry and automated PagerDuty alert triggers."));
 
             // 6. Security & Storage (3 items)
-            addItemToCatalog(new Item("K16", "HashiCorp Vault Secrets Cluster", "Security", 210.0, 94, 6.0));
-            addItemToCatalog(new Item("K17", "MinIO Distributed S3 Object Store", "Security", 260.0, 89, 12.0));
-            addItemToCatalog(new Item("K18", "WAF Cloudflare Ingress Controller", "Security", 95.0, 80, 3.0));
+            addItemToCatalog(new Item("K16", "HashiCorp Vault Secrets Cluster", "Security", 210.0, 94, 6.0,
+                    "Zero-trust cryptographic secrets management engine providing automated cloud credential rotation, KMS encryption, and audit tracing."));
+            addItemToCatalog(new Item("K17", "MinIO Distributed S3 Object Store", "Security", 260.0, 89, 12.0,
+                    "High-performance S3-compatible cloud object storage cluster optimized for unstructured data lakes, media assets, and backups."));
+            addItemToCatalog(new Item("K18", "WAF Cloudflare Ingress Controller", "Security", 95.0, 80, 3.0,
+                    "Edge DDoS mitigation and Layer-7 Web Application Firewall shielding internal service mesh pods from malicious exploit payloads."));
 
             // 7. DevOps & CI/CD (3 items)
-            addItemToCatalog(new Item("K19", "ArgoCD GitOps Deployment Daemon", "DevOps & CI/CD", 130.0, 83, 4.0));
-            addItemToCatalog(new Item("K20", "SonarQube Static Code Analyzer", "DevOps & CI/CD", 160.0, 79, 6.0));
-            addItemToCatalog(new Item("K21", "Docker Registry Private Cache", "DevOps & CI/CD", 90.0, 72, 4.0));
+            addItemToCatalog(new Item("K19", "ArgoCD GitOps Deployment Daemon", "DevOps & CI/CD", 130.0, 83, 4.0,
+                    "Declarative continuous delivery controller reconciling desired Git state against live Kubernetes cluster deployments."));
+            addItemToCatalog(new Item("K20", "SonarQube Static Code Analyzer", "DevOps & CI/CD", 160.0, 79, 6.0,
+                    "Automated code quality and security vulnerability gate analyzing code smells, coverage regressions, and OWASP compliance."));
+            addItemToCatalog(new Item("K21", "Docker Registry Private Cache", "DevOps & CI/CD", 90.0, 72, 4.0,
+                    "Geo-replicated container image caching mirror reducing node pull latencies and upstream Docker Hub throttling limits."));
         }
 
         // Initialize active deployment cart with balanced foundational microservices
