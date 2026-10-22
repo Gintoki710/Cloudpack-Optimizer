@@ -135,6 +135,11 @@ document.addEventListener('DOMContentLoaded', () => {
     nfCost: document.getElementById('nfCost'),
     packingSavingsText: document.getElementById('packingSavingsText'),
     boxesDetailedGrid: document.getElementById('boxesDetailedGrid'),
+    algoCardFfd: document.getElementById('algoCardFfd'),
+    algoCardBfd: document.getElementById('algoCardBfd'),
+    algoCardWfd: document.getElementById('algoCardWfd'),
+    algoCardNf: document.getElementById('algoCardNf'),
+    hostNodeSectionTitle: document.getElementById('hostNodeSectionTitle'),
 
     // Tab 4: AVL Tree
     avlTotalNodes: document.getElementById('avlTotalNodes'),
@@ -484,7 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const temp = minP; minP = maxP; maxP = temp;
         }
         if (el.priceRangeLabel) {
-          el.priceRangeLabel.textContent = `₹${minP.toLocaleString()} - ₹${maxP.toLocaleString()}`;
+          el.priceRangeLabel.textContent = `$${minP.toLocaleString()} - $${maxP.toLocaleString()}`;
         }
 
         try {
@@ -505,7 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
         el.btnResetPriceFilter.addEventListener('click', () => {
           el.minPriceSlider.value = 0;
           el.maxPriceSlider.value = 15000;
-          if (el.priceRangeLabel) el.priceRangeLabel.textContent = '₹0 - ₹15,000';
+          if (el.priceRangeLabel) el.priceRangeLabel.textContent = '$0 - $15,000';
           applyCatalogFilters();
         });
       }
@@ -552,7 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
       el.btnRunKnapsack.disabled = true;
       el.btnRunKnapsack.innerHTML = 'Computing 0/1 Knapsack DP...';
 
-      addLog(`[Knapsack DP] Evaluating optimal subset for cash budget ₹${budget.toLocaleString()}...`, 'green');
+      addLog(`[Knapsack DP] Evaluating optimal subset for cash budget $${budget.toLocaleString()}...`, 'green');
 
       try {
         const res = await apiPost('/api/knapsack', { budget, applyToCart: true });
@@ -562,7 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         el.optInsightBanner.style.display = 'flex';
         el.optInsightText.textContent = res.result.optimalityExplanation;
-        addLog(`[Knapsack DP] Solved! Optimal Utility: ${res.result.totalUtility} pts under ₹${res.result.totalCost}`, 'green');
+        addLog(`[Knapsack DP] Solved! Optimal Utility: ${res.result.totalUtility} pts under $${res.result.totalCost}`, 'green');
       } catch (err) {
         console.error('Knapsack failed:', err);
       } finally {
@@ -589,22 +594,78 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
+
+  function getActivePackingResult(comp) {
+    if (!comp) return null;
+    const algo = state.simulation.selectedAlgo || 'FFD';
+    if (algo === 'BFD' && comp.bfd) return comp.bfd;
+    if (algo === 'WFD' && comp.worstFit) return comp.worstFit;
+    if (algo === 'NF' && comp.nextFit) return comp.nextFit;
+    return comp.ffd || comp.optimalChoice;
+  }
+
+  function syncPackingAlgorithm(algo) {
+    state.simulation.selectedAlgo = algo;
+    if (el.packerAlgoSelect) el.packerAlgoSelect.value = algo;
+
+    const cards = [
+      { id: 'algoCardFfd', code: 'FFD', name: 'First Fit Decreasing (FFD)' },
+      { id: 'algoCardBfd', code: 'BFD', name: 'Best Fit Decreasing (BFD)' },
+      { id: 'algoCardWfd', code: 'WFD', name: 'Worst Fit Decreasing (WFD)' },
+      { id: 'algoCardNf',  code: 'NF',  name: 'Next Fit (NF)' }
+    ];
+
+    cards.forEach(c => {
+      const cardEl = document.getElementById(c.id);
+      if (cardEl) {
+        if (c.code === algo) {
+          cardEl.classList.add('active-winner');
+        } else {
+          cardEl.classList.remove('active-winner');
+        }
+      }
+    });
+
+    const activeDef = cards.find(c => c.code === algo);
+    if (el.hostNodeSectionTitle && activeDef) {
+      el.hostNodeSectionTitle.textContent = `Consolidated Bare-Metal Host Node Allocation (${activeDef.name})`;
+    }
+  }
+
   // 3D Wireframe Bin Packing Simulation Controls
 
   function setupSimulationControls() {
     // Algorithm dropdown
     el.packerAlgoSelect.addEventListener('change', (e) => {
-      state.simulation.selectedAlgo = e.target.value;
-      addLog(`[Bin Packing] Algorithm switched to: ${e.target.value}`, 'cyan');
+      const algo = e.target.value;
+      syncPackingAlgorithm(algo);
+      addLog(`[Host Node Scheduler] Packing heuristic switched to: ${algo}`, 'cyan');
       triggerBinPacking();
     });
 
-    // Box capacity select
+    // Hook click handlers onto the 4 algorithm benchmark cards in Tab 3
+    [
+      { id: 'algoCardFfd', code: 'FFD' },
+      { id: 'algoCardBfd', code: 'BFD' },
+      { id: 'algoCardWfd', code: 'WFD' },
+      { id: 'algoCardNf',  code: 'NF' }
+    ].forEach(item => {
+      const cardEl = document.getElementById(item.id);
+      if (cardEl) {
+        cardEl.addEventListener('click', () => {
+          syncPackingAlgorithm(item.code);
+          addLog(`[Host Node Scheduler] Switched placement heuristic to ${item.code}`, 'cyan');
+          triggerBinPacking();
+        });
+      }
+    });
+
+    // Host node RAM capacity select
     el.boxCapacitySelect.addEventListener('change', async (e) => {
       const cap = parseFloat(e.target.value);
       state.boxCapacity = cap;
-      el.dispBoxCapTag.textContent = `${cap.toFixed(1)} kg`;
-      addLog(`[Warehouse Packaging] Standard box weight limit set to: ${cap.toFixed(1)} kg`, 'cyan');
+      el.dispBoxCapTag.textContent = `${cap.toFixed(1)} GB RAM`;
+      addLog(`[Host Node Scheduler] Standard host node RAM limit set to: ${cap.toFixed(1)} GB`, 'cyan');
       await triggerBinPacking();
     });
 
@@ -824,13 +885,13 @@ document.addEventListener('DOMContentLoaded', () => {
             li.className = 'range-item-row';
             li.innerHTML = `
               <span>${it.name}</span>
-              <strong style="color: var(--accent-neon-green)">₹${it.price.toLocaleString()}</strong>
+              <strong style="color: var(--accent-neon-green)">$${it.price.toLocaleString()}</strong>
             `;
             el.rangeResultsList.appendChild(li);
           });
         }
         highlightAvlTreeRange(minP, maxP);
-        addLog(`[AVL Range Query] Pruned in-order traversal: matched ${res.items.length} items in [₹${minP}, ₹${maxP}]`, 'cyan');
+        addLog(`[AVL Range Query] Pruned in-order traversal: matched ${res.items.length} items in [$${minP}, $${maxP}]`, 'cyan');
       } catch (err) {
         console.error('Range search error:', err);
       }
@@ -903,8 +964,9 @@ document.addEventListener('DOMContentLoaded', () => {
         state.packingResult = res.comparison;
         renderPackingComparison(res.comparison);
         
-        // Initialize 3D Wireframe Simulation
-        initPackingSimulation(res.comparison.ffd);
+        // Initialize 3D Wireframe Simulation with the specifically selected algorithm
+        const activePack = getActivePackingResult(res.comparison);
+        initPackingSimulation(activePack);
       }
     } catch (err) {
       console.error('Bin packing fetch error:', err);
@@ -1054,7 +1116,7 @@ document.addEventListener('DOMContentLoaded', () => {
       chip.style.color = qItem.color.text;
       chip.innerHTML = `
         <span>${qItem.item.name.substring(0, 14)}</span>
-        <span style="opacity: 0.85; font-size: 0.62rem">(${qItem.item.weight}kg)</span>
+        <span style="opacity: 0.85; font-size: 0.62rem">(${qItem.item.weight} GB)</span>
       `;
       el.itemQueueContainer.appendChild(chip);
     });
@@ -1086,7 +1148,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       block.innerHTML = `
         <span class="block-label">${next.item.name}</span>
-        <span class="block-dim">${next.dimText} • ${next.item.weight}kg</span>
+        <span class="block-dim">${next.dimText} • ${next.item.weight} GB RAM</span>
       `;
       boxContainer.appendChild(block);
 
@@ -1100,28 +1162,30 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateSingleBoxPercentage(boxId) {
-    if (!state.packingResult || !state.packingResult.ffd) return;
-    const boxDef = state.packingResult.ffd.boxes.find(b => b.boxId === boxId);
+    const activePack = getActivePackingResult(state.packingResult);
+    if (!activePack || !activePack.boxes) return;
+    const boxDef = activePack.boxes.find(b => b.boxId === boxId);
     if (!boxDef) return;
 
-    // Calculate current weight of placed items in this box
+    // Calculate current RAM footprint of placed items in this host node
     const placedInThisBox = state.simulation.placedItems.filter(p => p.targetBoxId === boxId);
     const currWt = placedInThisBox.reduce((sum, p) => sum + p.item.weight, 0);
     const pct = Math.min(100, Math.round((currWt / boxDef.maxCapacity) * 100));
 
     const tag = document.getElementById(`binPctTag_${boxId}`);
     if (tag) {
-      tag.textContent = `${pct}% Full (${currWt.toFixed(1)}kg)`;
+      tag.textContent = `${pct}% RAM (${currWt.toFixed(1)} GB)`;
       if (pct >= 85) tag.style.color = '#fff';
       else tag.style.color = 'var(--text-secondary)';
     }
   }
 
   function startSimulation() {
+    const activePack = getActivePackingResult(state.packingResult);
     // If all items are already placed (like on initial load), reset to queue first!
     if (state.simulation.unpackedQueue.length === 0 && state.simulation.placedItems.length > 0) {
-      if (state.packingResult && state.packingResult.ffd) {
-        initPackingSimulation(state.packingResult.ffd, false);
+      if (activePack) {
+        initPackingSimulation(activePack, false);
       }
     }
 
@@ -1137,7 +1201,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const hasMore = stepSimulationForward(true);
       if (!hasMore) {
         pauseSimulation();
-        addLog('[Bin Packing Simulation] All cartons fully packed!', 'white');
+        addLog('[Bin Packing Simulation] All workloads scheduled onto host nodes!', 'white');
       }
     }, state.simulation.speedMs);
   }
@@ -1156,23 +1220,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function resetSimulation() {
     pauseSimulation();
-    if (state.packingResult && state.packingResult.ffd) {
-      initPackingSimulation(state.packingResult.ffd, false);
-      addLog('[Bin Packing Simulation] Emptied cartons. All items queued for placement.', 'muted');
+    const activePack = getActivePackingResult(state.packingResult);
+    if (activePack) {
+      initPackingSimulation(activePack, false);
+      addLog('[Bin Packing Simulation] Reset cluster host nodes. All workloads queued.', 'muted');
     }
   }
 
   function updatePackerKpis(packingData) {
     const boxCount = packingData.boxes ? packingData.boxes.length : 0;
-    const courierFee = packingData.courierCost || 0;
+    const nodeCost = packingData.courierCost || 0;
     const avgUtil = packingData.averageUtilization || 0;
 
-    el.packerBoxCountBadge.textContent = `${boxCount} Dispatched`;
-    el.packerCourierCostBadge.textContent = `Courier: ₹${courierFee.toFixed(2)}`;
+    el.packerBoxCountBadge.textContent = `${boxCount} Nodes Active`;
+    el.packerCourierCostBadge.textContent = `Node Spend: $${nodeCost.toFixed(2)}`;
 
     // Header KPIs
-    el.kpiCartBoxes.textContent = `${boxCount} Cartons`;
-    el.kpiCourierCostSub.textContent = `Courier: ₹${courierFee.toFixed(2)}`;
+    el.kpiCartBoxes.textContent = `${boxCount} Host Nodes`;
+    el.kpiCourierCostSub.textContent = `Host Nodes: $${nodeCost.toFixed(2)}`;
     el.kpiSpaceUtil.textContent = `${avgUtil}% Efficiency`;
     el.kpiUtilProgress.style.width = `${avgUtil}%`;
     el.kpiBoxesProgress.style.width = `${Math.min(100, boxCount * 25)}%`;
@@ -1340,9 +1405,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td><strong>${it.name}</strong> <span style="color: var(--text-muted); font-size: 0.68rem">(${it.category})</span></td>
-          <td class="text-right">₹${it.price.toLocaleString()}</td>
+          <td class="text-right">$${it.price.toLocaleString()}</td>
           <td class="text-right" style="color: #34d399; font-weight: 700;">+${it.utility} pts</td>
-          <td class="text-right" style="color: var(--text-secondary); font-family: var(--font-mono);">${it.weight} kg</td>
+          <td class="text-right" style="color: var(--text-secondary); font-family: var(--font-mono);">${it.weight} GB RAM</td>
           <td class="text-center">
             <button class="btn-xs btn-outline-danger btn-del-cart" data-index="${idx}" title="Remove item">&times;</button>
           </td>
@@ -1365,13 +1430,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const remaining = Math.max(0, budgetLimit - spent);
     const budgetPct = Math.min(100, Math.round((spent / budgetLimit) * 100));
 
-    el.dispBudgetLimit.textContent = `₹${budgetLimit.toLocaleString()}`;
-    el.dispCartCost.textContent = `₹${spent.toLocaleString()}`;
+    el.dispBudgetLimit.textContent = `$${budgetLimit.toLocaleString()}`;
+    el.dispCartCost.textContent = `$${spent.toLocaleString()}`;
     el.dispCartUtility.textContent = `${cart.totalUtility || 0} pts`;
-    el.dispRemainingBudget.textContent = `₹${remaining.toLocaleString()}`;
+    el.dispRemainingBudget.textContent = `$${remaining.toLocaleString()}`;
 
     // Header Ribbon KPIs
-    el.kpiCartCost.textContent = `₹${spent.toLocaleString()} / ₹${budgetLimit.toLocaleString()}`;
+    el.kpiCartCost.textContent = `$${spent.toLocaleString()} / $${budgetLimit.toLocaleString()}`;
     el.kpiBudgetProgress.style.width = `${budgetPct}%`;
     el.kpiWeightRatio.textContent = `${(cart.totalWeight || 0).toFixed(1)} GB Total RAM`;
 
@@ -1387,55 +1452,61 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderPackingComparison(comp) {
     el.ffdBoxCount.textContent = comp.ffd.boxCount;
     el.ffdUtil.textContent = `${comp.ffd.averageUtilization}%`;
-    el.ffdCost.textContent = `₹${comp.ffd.courierCost}`;
+    el.ffdCost.textContent = `$${comp.ffd.courierCost}`;
 
     el.bfdBoxCount.textContent = comp.bfd.boxCount;
     el.bfdUtil.textContent = `${comp.bfd.averageUtilization}%`;
-    el.bfdCost.textContent = `₹${comp.bfd.courierCost}`;
+    el.bfdCost.textContent = `$${comp.bfd.courierCost}`;
 
     el.wfdBoxCount.textContent = comp.worstFit.boxCount;
     el.wfdUtil.textContent = `${comp.worstFit.averageUtilization}%`;
-    el.wfdCost.textContent = `₹${comp.worstFit.courierCost}`;
+    el.wfdCost.textContent = `$${comp.worstFit.courierCost}`;
 
     el.nfBoxCount.textContent = comp.nextFit.boxCount;
     el.nfUtil.textContent = `${comp.nextFit.averageUtilization}%`;
-    el.nfCost.textContent = `₹${comp.nextFit.courierCost}`;
+    el.nfCost.textContent = `$${comp.nextFit.courierCost}`;
 
     if (comp.savingsVersusNaive > 0) {
-      el.packingSavingsText.textContent = `FFD Bin Packing saves ₹${comp.savingsVersusNaive.toFixed(2)} in courier dispatch charges compared to naive Next Fit packing (${comp.ffd.boxCount} boxes vs ${comp.nextFit.boxCount} boxes).`;
+      el.packingSavingsText.textContent = `FFD Bin Packing saves $${comp.savingsVersusNaive.toFixed(2)} in host server provisioning costs compared to naive Next Fit scheduling (${comp.ffd.boxCount} nodes vs ${comp.nextFit.boxCount} nodes).`;
     } else {
-      el.packingSavingsText.textContent = `FFD achieved optimal carton packing (${comp.ffd.boxCount} boxes used at ${comp.ffd.averageUtilization}% average capacity).`;
+      el.packingSavingsText.textContent = `FFD achieved optimal host node allocation (${comp.ffd.boxCount} nodes used at ${comp.ffd.averageUtilization}% average capacity).`;
     }
 
-    // Detailed Boxes Grid in Tab 3
+    // Keep active algorithm card highlighted
+    syncPackingAlgorithm(state.simulation.selectedAlgo || 'FFD');
+
+    // Detailed Boxes Grid in Tab 3 rendered for the ACTIVE algorithm
+    const activePack = getActivePackingResult(comp);
     el.boxesDetailedGrid.innerHTML = '';
-    comp.ffd.boxes.forEach(box => {
-      const card = document.createElement('div');
-      card.className = 'dash-card';
-      let chips = '';
-      box.items.forEach(it => {
-        chips += `<span class="queue-chip" style="background: var(--bg-surface); border: 1px solid var(--border-light);">${it.name} (${it.weight}kg)</span>`;
+    if (activePack && activePack.boxes) {
+      activePack.boxes.forEach(box => {
+        const card = document.createElement('div');
+        card.className = 'dash-card';
+        let chips = '';
+        box.items.forEach(it => {
+          chips += `<span class="queue-chip" style="background: var(--bg-surface); border: 1px solid var(--border-light);">${it.name} (${it.weight} GB)</span>`;
+        });
+        card.innerHTML = `
+          <div class="dash-card-header">
+            <span class="dash-card-title">Host Node #${box.boxId}</span>
+            <span class="badge-pill-cyan">${box.currentWeight} / ${box.maxCapacity} GB RAM</span>
+          </div>
+          <div class="kpi-progress-bar" style="height: 6px; margin: 0.5rem 0;">
+            <div class="kpi-progress-fill fill-green" style="width: ${box.utilizationPercentage}%"></div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem;">${chips}</div>
+        `;
+        el.boxesDetailedGrid.appendChild(card);
       });
-      card.innerHTML = `
-        <div class="dash-card-header">
-          <span class="dash-card-title">Carton #${box.boxId}</span>
-          <span class="badge-pill-cyan">${box.currentWeight} / ${box.maxCapacity} kg</span>
-        </div>
-        <div class="kpi-progress-bar" style="height: 6px; margin: 0.5rem 0;">
-          <div class="kpi-progress-fill fill-green" style="width: ${box.utilizationPercentage}%"></div>
-        </div>
-        <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem;">${chips}</div>
-      `;
-      el.boxesDetailedGrid.appendChild(card);
-    });
+    }
   }
 
   function renderKnapsackResult(result) {
     el.ksDpUtility.textContent = `${result.totalUtility} pts`;
-    el.ksDpCost.textContent = `Total Spend: ₹${result.totalCost.toLocaleString()} (Rem: ₹${result.remainingBudget})`;
+    el.ksDpCost.textContent = `Total Spend: $${result.totalCost.toLocaleString()} (Rem: $${result.remainingBudget})`;
 
     el.ksGreedyUtility.textContent = `${result.greedyUtility} pts`;
-    el.ksGreedyCost.textContent = `Total Spend: ₹${result.greedyCost.toLocaleString()}`;
+    el.ksGreedyCost.textContent = `Total Spend: $${result.greedyCost.toLocaleString()}`;
 
     const diff = result.totalUtility - result.greedyUtility;
     el.ksOptimalityGap.textContent = diff >= 0 ? `+${diff} pts` : `${diff} pts`;
@@ -1455,7 +1526,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         tr.innerHTML = `
           <td>${row.itemName}</td>
-          <td>₹${row.cost}</td>
+          <td>$${row.cost}</td>
           <td style="color: var(--accent-neon-green)">${row.utility}</td>
           ${valsHtml}
         `;
@@ -1470,7 +1541,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.className = 'item-tag-card';
       card.innerHTML = `
         <strong>${it.name}</strong>
-        <span>₹${it.price.toLocaleString()} • <span style="color: var(--accent-neon-green)">+${it.utility} pts</span></span>
+        <span>$${it.price.toLocaleString()} • <span style="color: var(--accent-neon-green)">+${it.utility} pts</span></span>
       `;
       el.ksDpItemsList.appendChild(card);
     });
@@ -1481,7 +1552,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.className = 'item-tag-card';
       card.innerHTML = `
         <strong>${it.name}</strong>
-        <span>₹${it.price.toLocaleString()} • <span style="color: var(--accent-amber)">+${it.utility} pts</span></span>
+        <span>$${it.price.toLocaleString()} • <span style="color: var(--accent-amber)">+${it.utility} pts</span></span>
       `;
       el.ksGreedyItemsList.appendChild(card);
     });
@@ -1493,18 +1564,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     el.undoStackList.innerHTML = '';
     if (!undoStack || undoStack.length === 0) {
-      el.undoStackList.innerHTML = '<div class="stack-empty-msg">Undo Stack is empty. Mutate cart to push actions.</div>';
+      el.undoStackList.innerHTML = '<div class="stack-empty-msg">Undo Stack is empty. Mutate cluster workloads to push actions.</div>';
     } else {
       for (let i = undoStack.length - 1; i >= 0; i--) {
         const act = undoStack[i];
         const card = document.createElement('div');
         card.className = 'stack-element-card';
+        
+        let typeStr = 'ACTION';
+        if (typeof act.type === 'string') {
+          typeStr = act.type.replace(/_/g, ' ');
+        } else if (act.type && typeof act.type.name === 'string') {
+          typeStr = act.type.name.replace(/_/g, ' ');
+        }
+        
+        let detailText = act.description || 'Cluster Workload Mutation';
+        let podName = detailText;
+        if (detailText.includes(':')) {
+          podName = detailText.split(':').slice(1).join(':').trim();
+        }
+        const podCount = act.nextItems ? `${act.nextItems.length} active pods` : '';
+
         card.innerHTML = `
-          <div>
-            <strong style="color: var(--accent-neon-green)">${act.type}</strong>
-            <span style="color: var(--text-muted); font-size: 0.72rem; display: block;">${act.item ? act.item.name : 'All Items'}</span>
+          <div style="flex: 1; min-width: 0;">
+            <div style="display: flex; align-items: center; gap: 0.45rem; margin-bottom: 2px;">
+              <strong style="color: var(--accent-neon-green); font-size: 0.76rem; letter-spacing: 0.04em;">${typeStr}</strong>
+              <span style="font-size: 0.65rem; color: var(--text-muted);">${podCount}</span>
+            </div>
+            <span style="color: #ffffff; font-weight: 600; font-size: 0.78rem; display: block; word-break: break-word;">${podName}</span>
           </div>
-          <span class="badge-pill-green">TOS #${i + 1}</span>
+          <span class="badge-pill-green" style="flex-shrink: 0;">TOS #${i + 1}</span>
         `;
         el.undoStackList.appendChild(card);
       }
@@ -1518,12 +1607,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const act = redoStack[i];
         const card = document.createElement('div');
         card.className = 'stack-element-card';
+        
+        let typeStr = 'ACTION';
+        if (typeof act.type === 'string') {
+          typeStr = act.type.replace(/_/g, ' ');
+        } else if (act.type && typeof act.type.name === 'string') {
+          typeStr = act.type.name.replace(/_/g, ' ');
+        }
+        
+        let detailText = act.description || 'Cluster Workload Mutation';
+        let podName = detailText;
+        if (detailText.includes(':')) {
+          podName = detailText.split(':').slice(1).join(':').trim();
+        }
+        const podCount = act.nextItems ? `${act.nextItems.length} active pods` : '';
+
         card.innerHTML = `
-          <div>
-            <strong style="color: var(--accent-neon-blue)">${act.type}</strong>
-            <span style="color: var(--text-muted); font-size: 0.72rem; display: block;">${act.item ? act.item.name : 'All Items'}</span>
+          <div style="flex: 1; min-width: 0;">
+            <div style="display: flex; align-items: center; gap: 0.45rem; margin-bottom: 2px;">
+              <strong style="color: var(--accent-neon-blue); font-size: 0.76rem; letter-spacing: 0.04em;">${typeStr}</strong>
+              <span style="font-size: 0.65rem; color: var(--text-muted);">${podCount}</span>
+            </div>
+            <span style="color: #ffffff; font-weight: 600; font-size: 0.78rem; display: block; word-break: break-word;">${podName}</span>
           </div>
-          <span class="badge-pill-cyan">TOS #${i + 1}</span>
+          <span class="badge-pill-cyan" style="flex-shrink: 0;">TOS #${i + 1}</span>
         `;
         el.redoStackList.appendChild(card);
       }
@@ -1559,104 +1666,197 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const svgNS = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(svgNS, 'svg');
-    svg.setAttribute('width', '100%');
-    svg.setAttribute('height', '100%');
-    svg.setAttribute('viewBox', '0 0 940 450');
-
-    // Layout tree nodes coordinates
-    const nodes = [];
-    const edges = [];
-
-    function traverse(node, x, y, dx) {
+    // 1. Gather all nodes with depth and branches using in-order traversal to guarantee zero horizontal collisions
+    const inOrderNodes = [];
+    function inOrder(node, depth, parentNode, branch) {
       if (!node) return;
-      nodes.push({ node, x, y });
+      node._depth = depth;
+      node._parent = parentNode;
+      node._branch = branch;
 
       const children = node.children || [];
       const leftChild = children.find(c => c.branch === 'L');
       const rightChild = children.find(c => c.branch === 'R');
 
-      if (leftChild) {
-        edges.push({ x1: x, y1: y, x2: x - dx, y2: y + 70 });
-        traverse(leftChild, x - dx, y + 70, dx * 0.52);
-      }
-      if (rightChild) {
-        edges.push({ x1: x, y1: y, x2: x + dx, y2: y + 70 });
-        traverse(rightChild, x + dx, y + 70, dx * 0.52);
-      }
+      if (leftChild) inOrder(leftChild, depth + 1, node, 'L');
+      inOrderNodes.push(node);
+      if (rightChild) inOrder(rightChild, depth + 1, node, 'R');
     }
 
-    traverse(rootNode, 470, 38, 220);
+    inOrder(rootNode, 0, null, null);
 
-    // Draw Edges
-    edges.forEach(e => {
-      const line = document.createElementNS(svgNS, 'line');
-      line.setAttribute('x1', e.x1);
-      line.setAttribute('y1', e.y1);
-      line.setAttribute('x2', e.x2);
-      line.setAttribute('y2', e.y2);
-      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-      line.setAttribute('stroke', isLight ? '#cbd5e1' : '#282828');
-      line.setAttribute('stroke-width', '1.5');
-      svg.appendChild(line);
+    const totalNodes = inOrderNodes.length;
+    let maxDepth = 0;
+    inOrderNodes.forEach(n => {
+      if (n._depth > maxDepth) maxDepth = n._depth;
     });
 
-    // Draw Nodes
-    nodes.forEach((n, idx) => {
+    // Dynamic canvas dimensions: spacious and uncrowded
+    const nodeSpacingX = Math.max(76, Math.min(100, Math.floor(1450 / Math.max(1, totalNodes))));
+    const svgWidth = Math.max(1200, (totalNodes + 1) * nodeSpacingX);
+    const levelHeight = 96;
+    const svgHeight = Math.max(540, (maxDepth + 1) * levelHeight + 90);
+
+    // Map each node to (x, y) coordinates
+    inOrderNodes.forEach((node, rank) => {
+      node._x = Math.round(nodeSpacingX + rank * ((svgWidth - (nodeSpacingX * 2)) / Math.max(1, totalNodes - 1)));
+      node._y = Math.round(55 + node._depth * levelHeight);
+    });
+
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('width', '100%');
+    svg.setAttribute('height', '100%');
+    svg.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
+    svg.style.minWidth = `${Math.min(svgWidth, 1200)}px`;
+
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+
+    // 2. Draw smooth curved connector edges
+    inOrderNodes.forEach(node => {
+      if (node._parent) {
+        const path = document.createElementNS(svgNS, 'path');
+        const x1 = node._parent._x;
+        const y1 = node._parent._y + 28;
+        const x2 = node._x;
+        const y2 = node._y - 28;
+        const cy1 = y1 + Math.round((y2 - y1) * 0.5);
+        const cy2 = y2 - Math.round((y2 - y1) * 0.5);
+        
+        path.setAttribute('d', `M ${x1} ${y1} C ${x1} ${cy1}, ${x2} ${cy2}, ${x2} ${y2}`);
+        path.setAttribute('fill', 'none');
+        path.setAttribute('stroke', isLight ? '#cbd5e1' : '#262626');
+        path.setAttribute('stroke-width', '2');
+        path.setAttribute('stroke-linecap', 'round');
+        svg.appendChild(path);
+
+        // Branch indicator badge (L or R) halfway along the curve
+        const midX = Math.round((x1 + x2) / 2);
+        const midY = Math.round((y1 + y2) / 2);
+        const branchText = document.createElementNS(svgNS, 'text');
+        branchText.setAttribute('x', midX);
+        branchText.setAttribute('y', midY);
+        branchText.setAttribute('text-anchor', 'middle');
+        branchText.setAttribute('dominant-baseline', 'central');
+        branchText.setAttribute('font-family', 'JetBrains Mono, monospace');
+        branchText.setAttribute('font-size', '9px');
+        branchText.setAttribute('font-weight', '700');
+        branchText.setAttribute('fill', isLight ? '#94a3b8' : '#525252');
+        branchText.textContent = node._branch || '';
+        svg.appendChild(branchText);
+      }
+    });
+
+    // 3. Draw Enlarged, Sleek AVL Nodes
+    inOrderNodes.forEach((node, idx) => {
       const g = document.createElementNS(svgNS, 'g');
       g.setAttribute('class', 'tree-node-group');
-      g.setAttribute('id', `avl_node_${idx}`);
+      g.setAttribute('id', `avl_node_${node.id || idx}`);
       g.style.cursor = 'pointer';
 
-      // SVG Tooltip
+      const isRoot = (node === rootNode);
+
+      // Rich Tooltip
       const title = document.createElementNS(svgNS, 'title');
-      title.textContent = `${n.node.name || 'Item'}\nPrice: ₹${n.node.price}\nWeight: ${n.node.weight}kg\nUtility: ${n.node.utility}pts\nHeight: ${n.node.height}\nBalance Factor: ${n.node.balance || 0}`;
+      title.textContent = `[${node.id || 'POD'}] ${node.name || 'Workload'}\n` +
+        `Monthly Cost: $${node.price}/mo\n` +
+        `RAM Footprint: ${node.weight} GB RAM\n` +
+        `SLA Utility: +${node.utility} pts\n` +
+        `Tree Depth: Level ${node._depth}\n` +
+        `Subtree Height: ${node.height}\n` +
+        `Balance Factor: ${node.balance || 0}`;
       g.appendChild(title);
 
+      // Node Circle (Enlarged: radius 30px)
       const circle = document.createElementNS(svgNS, 'circle');
-      circle.setAttribute('cx', n.x);
-      circle.setAttribute('cy', n.y);
-      circle.setAttribute('r', '22');
+      circle.setAttribute('cx', node._x);
+      circle.setAttribute('cy', node._y);
+      circle.setAttribute('r', '30');
       circle.setAttribute('class', 'tree-node-circle');
-      const isLightNode = document.documentElement.getAttribute('data-theme') === 'light';
-      circle.setAttribute('fill', idx === 0 ? (isLightNode ? '#0f172a' : '#ffffff') : (isLightNode ? '#ffffff' : '#141414'));
-      circle.setAttribute('stroke', idx === 0 ? (isLightNode ? '#0f172a' : '#ffffff') : (isLightNode ? '#cbd5e1' : '#2e2e2e'));
+      circle.setAttribute('data-price', node.price);
 
-      circle.setAttribute('stroke-width', '1.5');
-      circle.setAttribute('data-price', n.node.price);
-
-      const textPrice = document.createElementNS(svgNS, 'text');
-      textPrice.setAttribute('x', n.x);
-      textPrice.setAttribute('y', n.y - 2);
-      textPrice.setAttribute('text-anchor', 'middle');
-      textPrice.setAttribute('font-family', 'JetBrains Mono, monospace');
-      textPrice.setAttribute('font-size', '10px');
-      textPrice.setAttribute('font-weight', '700');
-      textPrice.setAttribute('fill', idx === 0 ? (isLightNode ? '#ffffff' : '#000000') : (isLightNode ? '#0f172a' : '#ffffff'));
-      textPrice.textContent = `₹${Math.round(n.node.price)}`;
-
-      const textName = document.createElementNS(svgNS, 'text');
-      textName.setAttribute('x', n.x);
-      textName.setAttribute('y', n.y + 12);
-      textName.setAttribute('text-anchor', 'middle');
-      textName.setAttribute('font-size', '8px');
-      textName.setAttribute('fill', idx === 0 ? (isLightNode ? '#cbd5e1' : '#333333') : (isLightNode ? '#64748b' : '#888888'));
-      const itemTitle = n.node.name || '';
-      textName.textContent = itemTitle.length > 8 ? itemTitle.substring(0, 7) + '..' : itemTitle;
-
+      if (isRoot) {
+        circle.setAttribute('fill', isLight ? '#0f172a' : '#ffffff');
+        circle.setAttribute('stroke', isLight ? '#0284c7' : '#38bdf8');
+        circle.setAttribute('stroke-width', '2.5');
+      } else {
+        circle.setAttribute('fill', isLight ? '#ffffff' : '#141414');
+        circle.setAttribute('stroke', isLight ? '#cbd5e1' : '#2b2b2b');
+        circle.setAttribute('stroke-width', '2');
+      }
       g.appendChild(circle);
+
+      // Balance Factor mini badge top right of circle
+      const bfVal = node.balance || 0;
+      const bfBadge = document.createElementNS(svgNS, 'rect');
+      bfBadge.setAttribute('x', node._x + 14);
+      bfBadge.setAttribute('y', node._y - 28);
+      bfBadge.setAttribute('width', '20');
+      bfBadge.setAttribute('height', '13');
+      bfBadge.setAttribute('rx', '3');
+      bfBadge.setAttribute('fill', Math.abs(bfVal) > 1 ? '#ef4444' : (isLight ? '#f1f5f9' : '#1f1f1f'));
+      bfBadge.setAttribute('stroke', isLight ? '#cbd5e1' : '#333333');
+      bfBadge.setAttribute('stroke-width', '1');
+      g.appendChild(bfBadge);
+
+      const bfText = document.createElementNS(svgNS, 'text');
+      bfText.setAttribute('x', node._x + 24);
+      bfText.setAttribute('y', node._y - 21);
+      bfText.setAttribute('text-anchor', 'middle');
+      bfText.setAttribute('dominant-baseline', 'central');
+      bfText.setAttribute('font-family', 'JetBrains Mono, monospace');
+      bfText.setAttribute('font-size', '8px');
+      bfText.setAttribute('font-weight', '700');
+      bfText.setAttribute('fill', Math.abs(bfVal) > 1 ? '#ffffff' : (isLight ? '#475569' : '#94a3b8'));
+      bfText.textContent = (bfVal >= 0 ? '+' : '') + bfVal;
+      g.appendChild(bfText);
+
+      // Price Label (Enlarged, Bold JetBrains Mono)
+      const textPrice = document.createElementNS(svgNS, 'text');
+      textPrice.setAttribute('x', node._x);
+      textPrice.setAttribute('y', node._y - 5);
+      textPrice.setAttribute('text-anchor', 'middle');
+      textPrice.setAttribute('dominant-baseline', 'central');
+      textPrice.setAttribute('font-family', 'JetBrains Mono, monospace');
+      textPrice.setAttribute('font-size', '12px');
+      textPrice.setAttribute('font-weight', '800');
+      textPrice.setAttribute('fill', isRoot ? (isLight ? '#ffffff' : '#000000') : (isLight ? '#0f172a' : '#ffffff'));
+      textPrice.textContent = `$${Math.round(node.price)}`;
       g.appendChild(textPrice);
+
+      // Microservice ID or Short Title
+      const textName = document.createElementNS(svgNS, 'text');
+      textName.setAttribute('x', node._x);
+      textName.setAttribute('y', node._y + 11);
+      textName.setAttribute('text-anchor', 'middle');
+      textName.setAttribute('dominant-baseline', 'central');
+      textName.setAttribute('font-family', 'JetBrains Mono, monospace');
+      textName.setAttribute('font-size', '9px');
+      textName.setAttribute('font-weight', '700');
+      textName.setAttribute('fill', isRoot ? (isLight ? '#93c5fd' : '#475569') : (isLight ? '#0284c7' : '#38bdf8'));
+      textName.textContent = node.id || 'POD';
       g.appendChild(textName);
 
-      // Click interaction: sets min price and selects node
+      // Pod name below circle
+      const labelText = document.createElementNS(svgNS, 'text');
+      labelText.setAttribute('x', node._x);
+      labelText.setAttribute('y', node._y + 44);
+      labelText.setAttribute('text-anchor', 'middle');
+      labelText.setAttribute('font-size', '9.5px');
+      labelText.setAttribute('font-weight', '500');
+      labelText.setAttribute('fill', isLight ? '#475569' : '#94a3b8');
+      const itemTitle = node.name || '';
+      labelText.textContent = itemTitle.length > 15 ? itemTitle.substring(0, 13) + '…' : itemTitle;
+      g.appendChild(labelText);
+
+      // Click interaction
       g.addEventListener('click', () => {
         if (el.avlRangeMin && el.avlRangeMax) {
-          el.avlRangeMin.value = Math.max(0, Math.round(n.node.price - 500));
-          el.avlRangeMax.value = Math.round(n.node.price + 500);
+          el.avlRangeMin.value = Math.max(0, Math.round(node.price - 75));
+          el.avlRangeMax.value = Math.round(node.price + 75);
           if (el.btnExecuteRangeSearch) el.btnExecuteRangeSearch.click();
         }
-        addLog(`[AVL Node Inspected] "${n.node.name}" (₹${n.node.price}, ${n.node.weight}kg, Utility: ${n.node.utility}, Height: ${n.node.height}, Balance: ${n.node.balance || 0})`, 'white');
+        addLog(`[AVL Node Inspected] "${node.name}" (${node.id}) — $${node.price}/mo, ${node.weight} GB RAM, SLA: +${node.utility} pts, Tree Depth: Level ${node._depth}, BF: ${node.balance || 0}`, 'white');
       });
 
       svg.appendChild(g);
@@ -1671,25 +1871,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const isLightH = document.documentElement.getAttribute('data-theme') === 'light';
     groups.forEach(g => {
       const circle = g.querySelector('.tree-node-circle');
-      const textPrice = g.querySelector('text:first-of-type');
-      const textName = g.querySelector('text:last-of-type');
       if (!circle) return;
 
       const price = parseFloat(circle.getAttribute('data-price'));
       if (price >= minP && price <= maxP) {
-        circle.setAttribute('fill', isLightH ? '#0f172a' : '#ffffff');
-        circle.setAttribute('stroke', isLightH ? '#0f172a' : '#ffffff');
-        if (textPrice) textPrice.setAttribute('fill', isLightH ? '#ffffff' : '#000000');
-        if (textName) textName.setAttribute('fill', isLightH ? '#cbd5e1' : '#333333');
+        circle.setAttribute('stroke', isLightH ? '#0284c7' : '#38bdf8');
+        circle.setAttribute('stroke-width', '3');
+        circle.style.filter = isLightH ? 'drop-shadow(0 2px 6px rgba(2, 132, 199, 0.3))' : 'drop-shadow(0 0 10px rgba(56, 189, 248, 0.5))';
       } else {
-        circle.setAttribute('fill', isLightH ? '#ffffff' : '#141414');
-        circle.setAttribute('stroke', isLightH ? '#cbd5e1' : '#282828');
-        if (textPrice) textPrice.setAttribute('fill', isLightH ? '#0f172a' : '#ffffff');
-        if (textName) textName.setAttribute('fill', isLightH ? '#64748b' : '#777777');
+        circle.setAttribute('stroke', isLightH ? '#cbd5e1' : '#2b2b2b');
+        circle.setAttribute('stroke-width', '2');
+        circle.style.filter = 'none';
       }
     });
   }
-
 
   // Huffman Compression & Checkout Result
 
@@ -2015,7 +2210,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <p style="margin: 3pt 0;"><strong>Customer / Buyer:</strong> ${escapeHtml(customer)}</p>
           <p style="margin: 3pt 0;"><strong>Organization / Event:</strong> ${escapeHtml(org)}</p>
           <p style="margin: 3pt 0;"><strong>Export Date:</strong> ${escapeHtml(dateStr)}</p>
-          <p style="margin: 3pt 0;"><strong>Algorithmic Verification:</strong> 0/1 Knapsack Optimal &bull; FFD Carton Packing &bull; Huffman Coding 100% Lossless Recovery</p>
+          <p style="margin: 3pt 0;"><strong>Algorithmic Verification:</strong> 0/1 Knapsack Optimal &bull; FFD Host Node Packing &bull; Huffman Coding 100% Lossless Recovery</p>
         </div>
 
         <h3 style="margin-top: 15pt; margin-bottom: 6pt;">DECOMPRESSED INVOICE MANIFEST:</h3>
