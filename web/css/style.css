@@ -228,7 +228,7 @@ body.app-body {
 .brand-name {
   font-size: 0.98rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.04em;
   color: #fff;
 }
 
