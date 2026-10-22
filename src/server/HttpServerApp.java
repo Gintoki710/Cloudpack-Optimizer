@@ -169,8 +169,9 @@ public class HttpServerApp {
             double price = ((Number) req.getOrDefault("price", 100.0)).doubleValue();
             int utility = ((Number) req.getOrDefault("utility", 50)).intValue();
             double weight = ((Number) req.getOrDefault("weight", 1.0)).doubleValue();
+            String description = (String) req.getOrDefault("description", "Custom-registered microservice workload.");
 
-            Item item = new Item(id, name, category, price, utility, weight);
+            Item item = new Item(id, name, category, price, utility, weight, description);
             service.addItemToCatalog(item);
 
             Map<String, Object> res = new LinkedHashMap<>();
