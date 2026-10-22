@@ -686,10 +686,24 @@
               <div class="dash-card avl-tree-card">
                 <div class="tree-controls-bar">
                   <div class="tree-metrics">
-                    <span class="tree-stat">Nodes: <strong id="avlTotalNodes">12</strong></span>
-                    <span class="tree-stat">Tree Height: <strong id="avlHeight">4</strong></span>
+                    <span class="tree-stat">Nodes: <strong id="avlTotalNodes">36</strong></span>
+                    <span class="tree-stat">Tree Height: <strong id="avlHeight">6</strong></span>
                     <span class="tree-stat">Balance: <strong class="text-white">Strictly Balanced</strong></span>
                   </div>
+
+                  <div class="tree-zoom-toolbar">
+                    <button type="button" class="btn-tree-zoom" id="btnAvlZoomOut" title="Zoom Out (-)" aria-label="Zoom Out">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </button>
+                    <button type="button" class="btn-tree-zoom-badge" id="avlZoomLevelBadge" title="Reset Zoom to 100%">100%</button>
+                    <button type="button" class="btn-tree-zoom" id="btnAvlZoomIn" title="Zoom In (+)" aria-label="Zoom In">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </button>
+                    <button type="button" class="btn-tree-zoom btn-tree-reset" id="btnAvlZoomReset" title="Fit Entire Tree to Screen">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                    </button>
+                  </div>
+
                   <div class="tree-legend">
                     <span class="legend-item"><span class="legend-dot root-dot"></span> Root Node</span>
                     <span class="legend-item"><span class="legend-dot in-range-dot"></span> In Price Range</span>
@@ -698,6 +712,19 @@
                 </div>
 
                 <div class="avl-canvas-container" id="avlTreeCanvasContainer">
+                  <div class="avl-canvas-hint">Drag to Pan • Click + / - to Zoom</div>
+                  <div class="avl-floating-zoom">
+                    <button type="button" class="floating-zoom-btn" id="btnFloatingZoomOut" title="Zoom Out (-)">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </button>
+                    <span class="floating-zoom-pct" id="floatingZoomPct">100%</span>
+                    <button type="button" class="floating-zoom-btn" id="btnFloatingZoomIn" title="Zoom In (+)">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </button>
+                    <button type="button" class="floating-zoom-btn" id="btnFloatingZoomReset" title="Fit to Screen">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                    </button>
+                  </div>
                   <div id="avlTreeGraph" class="tree-graph"></div>
                 </div>
               </div>
