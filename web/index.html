@@ -241,22 +241,82 @@
         <!-- ===================================================================== -->
         <div id="tab-dashboard" class="tab-panel active">
           
-          <!-- Interactive Mode Switcher Bar -->
+          <!-- Interactive Dual-Engine Mode Switcher (Animated Slider Inspired by Day/Night) -->
           <div class="dashboard-mode-switcher-bar">
-            <div class="mode-switch-group">
-              <button class="mode-switch-btn active" id="btnModeKnapsack" data-mode="knapsack" type="button">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                <span>0/1 Knapsack Optimizer</span>
-                <span class="mode-pill-badge">Catalog &amp; Cart</span>
+            <div class="engine-switch-container">
+              <!-- Left Engine Tab (Knapsack) -->
+              <button class="engine-tab active" id="btnModeKnapsack" data-mode="knapsack" type="button">
+                <span class="engine-tab-icon engine-icon-knapsack">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                </span>
+                <div class="engine-tab-text">
+                  <span class="engine-tab-title">0/1 Knapsack Optimizer</span>
+                  <span class="engine-tab-badge">FinOps SLA Budget</span>
+                </div>
               </button>
-              <button class="mode-switch-btn" id="btnModeBinpack" data-mode="binpack" type="button">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-                <span>Host Node Bin Packing</span>
-                <span class="mode-pill-badge">3D Server Nodes</span>
+
+              <!-- Center Interactive Animated Toggle Slider Pill -->
+              <button id="engineTogglePillBtn" class="engine-toggle-slider-btn is-knapsack" type="button" role="switch" aria-checked="false" aria-label="Toggle between Knapsack Optimizer and Host Node Bin Packing" title="Click to Switch Engine">
+                <span class="engine-toggle-track">
+                  <!-- Knapsack Track Ambience -->
+                  <span class="engine-track-ambient knapsack-ambient">
+                    <svg class="engine-ambient-svg" viewBox="0 0 40 24" fill="none">
+                      <path d="M2 18L10 6L18 14L26 8L34 16" stroke="rgba(34, 211, 238, 0.45)" stroke-width="1.5" stroke-linecap="round"/>
+                      <circle cx="10" cy="6" r="2" fill="#22d3ee"/>
+                      <circle cx="26" cy="8" r="2" fill="#34d399"/>
+                    </svg>
+                  </span>
+
+                  <!-- Binpack Track Ambience -->
+                  <span class="engine-track-ambient binpack-ambient">
+                    <svg class="engine-ambient-svg" viewBox="0 0 40 24" fill="none">
+                      <rect x="6" y="5" width="8" height="8" rx="1.5" stroke="rgba(168, 85, 247, 0.6)" stroke-width="1.2"/>
+                      <rect x="24" y="9" width="8" height="8" rx="1.5" stroke="rgba(192, 132, 252, 0.6)" stroke-width="1.2"/>
+                      <path d="M14 9H24" stroke="rgba(168, 85, 247, 0.5)" stroke-width="1.2" stroke-dasharray="2 2"/>
+                    </svg>
+                  </span>
+
+                  <!-- Gliding Tech Thumb -->
+                  <span class="engine-toggle-thumb">
+                    <span class="engine-orb">
+                      <!-- Pulsing Aura Halo -->
+                      <span class="engine-aura"></span>
+                      
+                      <!-- Knapsack Icon in Thumb -->
+                      <span class="orb-icon orb-knapsack">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+                          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                        </svg>
+                      </span>
+                      
+                      <!-- Binpack Icon in Thumb -->
+                      <span class="orb-icon orb-binpack">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+                          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                          <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                          <line x1="12" y1="22.08" x2="12" y2="12"/>
+                        </svg>
+                      </span>
+                    </span>
+                  </span>
+                </span>
+              </button>
+
+              <!-- Right Engine Tab (Bin Packing) -->
+              <button class="engine-tab" id="btnModeBinpack" data-mode="binpack" type="button">
+                <span class="engine-tab-icon engine-icon-binpack">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                </span>
+                <div class="engine-tab-text">
+                  <span class="engine-tab-title">Host Node Bin Packing</span>
+                  <span class="engine-tab-badge">3D Server Nodes</span>
+                </div>
               </button>
             </div>
+
             <div class="mode-meta-info" id="modeMetaInfo">
-              <span class="mode-tip-text">Active Mode: <strong id="modeStatusText">0/1 Knapsack FinOps Workload Planner</strong></span>
+              <span class="mode-tip-text">Active Engine: <strong id="modeStatusText">0/1 Knapsack FinOps Workload Planner</strong></span>
             </div>
           </div>
 
@@ -296,30 +356,46 @@
                 </div>
               </div>
 
-              <!-- Top Knapsack Action Trigger & Category Donut row -->
-              <div style="display: grid; grid-template-columns: minmax(280px, 1fr) auto; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                <div class="knapsack-trigger-bar" style="margin-top: 0;">
-                  <div class="budget-input-inline">
-                    <label for="budgetInput">Spending Budget ($):</label>
-                    <input type="number" id="budgetInput" value="10000" min="100" max="100000" step="500" class="input-budget-field">
+              <!-- Top Knapsack Action Trigger & Enlarged Category Donut Chart Row -->
+              <div class="dashboard-knapsack-action-row">
+                <!-- FinOps Budget Control Card -->
+                <div class="knapsack-trigger-card">
+                  <div class="knapsack-trigger-header">
+                    <span class="trigger-title">0/1 Knapsack FinOps Solver</span>
+                    <span class="trigger-sub">Global SLA Optimization strictly bounded by Cloud Budget</span>
                   </div>
-                  <button class="btn-stark-white" id="btnRunKnapsack">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                    Auto-Maximize Cart (0/1 Knapsack DP)
-                  </button>
+                  <div class="knapsack-trigger-body">
+                    <div class="budget-input-group">
+                      <label for="budgetInput" class="budget-input-label">Allocated Cloud Spending Budget:</label>
+                      <div class="budget-input-wrapper">
+                        <span class="currency-prefix">$</span>
+                        <input type="number" id="budgetInput" value="10000" min="100" max="100000" step="500" class="input-budget-field" placeholder="10000">
+                      </div>
+                    </div>
+                    <button class="btn-stark-white btn-run-dp" id="btnRunKnapsack">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                      <span>Auto-Maximize Cart (0/1 Knapsack DP)</span>
+                    </button>
+                  </div>
                 </div>
 
-                <!-- Donut Chart & Category Breakdown (Compact) -->
-                <div class="donut-section-wrapper" style="margin-top: 0; padding: 0.6rem 0.9rem;">
-                  <div class="donut-chart-container" style="width: 70px; height: 70px;">
-                    <svg id="categoryDonutSvg" viewBox="0 0 160 160" class="donut-svg">
-                      <circle cx="80" cy="80" r="60" fill="transparent" stroke="#1c1c1c" stroke-width="24" />
-                      <g id="donutSlicesGroup"></g>
-                      <text x="80" y="76" text-anchor="middle" class="donut-center-num" id="donutCenterCount">0</text>
-                      <text x="80" y="93" text-anchor="middle" class="donut-center-label">Items</text>
-                    </svg>
+                <!-- Enlarged Donut / Pie Chart & Category Breakdown -->
+                <div class="donut-section-wrapper">
+                  <div class="donut-chart-header">
+                    <span class="donut-card-title">Cluster Workload Distribution</span>
+                    <span class="donut-card-sub">Active Microservice SLA Mix by Category</span>
                   </div>
-                  <div class="donut-legend" id="donutLegendContainer"></div>
+                  <div class="donut-body-row">
+                    <div class="donut-chart-container">
+                      <svg id="categoryDonutSvg" viewBox="0 0 160 160" class="donut-svg">
+                        <circle cx="80" cy="80" r="58" fill="transparent" stroke="#1c1c1c" stroke-width="24" />
+                        <g id="donutSlicesGroup"></g>
+                        <text x="80" y="74" text-anchor="middle" class="donut-center-num" id="donutCenterCount">0</text>
+                        <text x="80" y="94" text-anchor="middle" class="donut-center-label">Workloads</text>
+                      </svg>
+                    </div>
+                    <div class="donut-legend" id="donutLegendContainer"></div>
+                  </div>
                 </div>
               </div>
 
