@@ -751,6 +751,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const itemData = {
           name: el.modalItemName.value,
           category: el.modalItemCategory.value,
+          description: el.modalItemDesc ? el.modalItemDesc.value.trim() : '',
           price: parseFloat(el.modalItemPrice.value),
           utility: parseInt(el.modalItemUtility.value),
           weight: parseFloat(el.modalItemWeight.value)
@@ -765,11 +766,11 @@ document.addEventListener('DOMContentLoaded', () => {
             closeModal();
             el.formAddCatalogItem.reset();
             await fetchCatalogData();
-            addLog(`[AVL Tree] Dynamically inserted custom product: "${itemData.name}" (₹${itemData.price}, ${itemData.weight}kg, +${itemData.utility}pts)`, 'white');
+            addLog(`[AVL Tree] Dynamically inserted custom microservice: "${itemData.name}" ($${itemData.price}/mo, ${itemData.weight}GB RAM, +${itemData.utility}pts SLA)`, 'white');
 
             if (autoAdd && res.item && res.item.id) {
               await apiPost('/api/cart/add', { itemId: res.item.id });
-              addLog(`[Cart] Automatically added custom product "${itemData.name}" to Cart & Packing`, 'white');
+              addLog(`[Cluster Action] Automatically scheduled custom pod "${itemData.name}" into cluster packing`, 'white');
               await fetchCart();
               await triggerBinPacking();
             }
