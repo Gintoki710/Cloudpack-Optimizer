@@ -1907,10 +1907,18 @@ body.app-body {
   flex-direction: column;
   gap: 0.55rem;
   position: relative;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.algo-card:hover {
+  transform: translateY(-2px);
+  border-color: #38bdf8;
 }
 
 .algo-card.active-winner {
-  border-color: #ffffff;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.25);
 }
 
 .algo-badge {
