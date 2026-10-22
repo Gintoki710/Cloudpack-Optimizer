@@ -1039,7 +1039,10 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       `;
       const btnPrompt = document.getElementById('btnPopulateCartPrompt');
-      if (btnPrompt) btnPrompt.addEventListener('click', () => el.btnRunKnapsack.click());
+      if (btnPrompt) btnPrompt.addEventListener('click', () => {
+        if (el.btnModeKnapsack) el.btnModeKnapsack.click();
+        el.btnRunKnapsack.click();
+      });
       el.itemQueueContainer.innerHTML = '<span class="text-muted" style="font-size: 0.72rem;">No pending items.</span>';
       el.unpackedItemsCount.textContent = '0 pending';
       updatePackerKpis(packingData);
