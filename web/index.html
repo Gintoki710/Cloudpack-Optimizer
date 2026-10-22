@@ -579,10 +579,10 @@
         <div id="tab-packing" class="tab-panel">
           <div class="panel-inner-container">
             <div class="panel-hero">
-              <span class="hero-badge">Approximation Algorithm • Warehouse Carton Minimizer</span>
-              <h2>Warehouse Carton Bin Packing: Courier Charge Minimizer</h2>
+              <span class="hero-badge">Approximation Algorithm • Host Node Minimizer</span>
+              <h2>Kubernetes Host Node Bin Packing: Cloud Compute Optimizer</h2>
               <p>
-                Partitions items of varying weights into standard cartons (\(\le 10\) kg) to directly reduce courier bills.
+                Partitions workloads of varying memory footprints into standard compute host nodes (\(\le 64\) GB RAM) to directly minimize server lease and cloud infrastructure spend.
                 Compares First Fit Decreasing against Best Fit, Worst Fit, and Naive Next Fit.
               </p>
             </div>
@@ -590,7 +590,7 @@
             <!-- Comparison Cards of 4 Algorithms -->
             <div class="algorithms-grid">
               
-              <div class="algo-card active-winner" id="algoCardFfd">
+              <div class="algo-card active-winner" id="algoCardFfd" data-algo="FFD" style="cursor: pointer;">
                 <div class="algo-badge winner-badge">RECOMMENDED (OFFLINE)</div>
                 <h3 class="algo-title">First Fit Decreasing (FFD)</h3>
                 <div class="algo-metric">
@@ -599,12 +599,12 @@
                 </div>
                 <div class="algo-meta">
                   <span>Avg Utilization: <strong id="ffdUtil">0%</strong></span>
-                  <span>Host Server Spend: <strong id="ffdCost">₹0</strong></span>
+                  <span>Host Server Spend: <strong id="ffdCost">$0</strong></span>
                 </div>
                 <p class="algo-desc">Sorts weights descending, scans from first bin. Proven bound \(\le \frac{11}{9}\text{OPT} + \frac{6}{9}\).</p>
               </div>
 
-              <div class="algo-card" id="algoCardBfd">
+              <div class="algo-card" id="algoCardBfd" data-algo="BFD" style="cursor: pointer;">
                 <div class="algo-badge">TIGHTEST FIT</div>
                 <h3 class="algo-title">Best Fit Decreasing (BFD)</h3>
                 <div class="algo-metric">
@@ -613,12 +613,12 @@
                 </div>
                 <div class="algo-meta">
                   <span>Avg Utilization: <strong id="bfdUtil">0%</strong></span>
-                  <span>Host Server Spend: <strong id="bfdCost">₹0</strong></span>
+                  <span>Host Server Spend: <strong id="bfdCost">$0</strong></span>
                 </div>
                 <p class="algo-desc">Places item in the bin leaving minimum remaining capacity. Tightest packing.</p>
               </div>
 
-              <div class="algo-card" id="algoCardWfd">
+              <div class="algo-card" id="algoCardWfd" data-algo="WFD" style="cursor: pointer;">
                 <div class="algo-badge">BALANCED LOAD</div>
                 <h3 class="algo-title">Worst Fit Decreasing (WFD)</h3>
                 <div class="algo-metric">
@@ -627,12 +627,12 @@
                 </div>
                 <div class="algo-meta">
                   <span>Avg Utilization: <strong id="wfdUtil">0%</strong></span>
-                  <span>Host Server Spend: <strong id="wfdCost">₹0</strong></span>
+                  <span>Host Server Spend: <strong id="wfdCost">$0</strong></span>
                 </div>
                 <p class="algo-desc">Places item into bin with largest remaining capacity. Useful for weight distribution.</p>
               </div>
 
-              <div class="algo-card naive-card" id="algoCardNf">
+              <div class="algo-card naive-card" id="algoCardNf" data-algo="NF" style="cursor: pointer;">
                 <div class="algo-badge naive-badge">NAIVE / ONLINE</div>
                 <h3 class="algo-title">Next Fit (NF)</h3>
                 <div class="algo-metric">
@@ -641,7 +641,7 @@
                 </div>
                 <div class="algo-meta">
                   <span>Avg Utilization: <strong id="nfUtil">0%</strong></span>
-                  <span>Host Server Spend: <strong id="nfCost">₹0</strong></span>
+                  <span>Host Server Spend: <strong id="nfCost">$0</strong></span>
                 </div>
                 <p class="algo-desc">Never reopens closed bins. Competitive ratio \(2 \cdot \text{OPT}\). Demonstrates wasted shipping fees.</p>
               </div>
@@ -651,13 +651,13 @@
             <!-- Savings Callout -->
             <div class="savings-callout" id="packingSavingsCallout">
               <span class="savings-icon">💰</span>
-              <span class="savings-text" id="packingSavingsText">FFD saves courier charges compared to naive next fit packing.</span>
+              <span class="savings-text" id="packingSavingsText">FFD saves physical server provisioning costs compared to naive next fit scheduling.</span>
             </div>
 
             <!-- Visual Packing Boxes Detailed View -->
             <div class="dash-card mt-4">
               <div class="dash-card-header">
-                <h3 class="dash-card-title">Consolidated Bare-Metal Host Node Allocation (FFD)</h3>
+                <h3 class="dash-card-title" id="hostNodeSectionTitle">Consolidated Bare-Metal Host Node Allocation (FFD)</h3>
               </div>
               <div class="boxes-detailed-grid" id="boxesDetailedGrid"></div>
             </div>
