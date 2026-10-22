@@ -986,27 +986,31 @@
           <label class="form-label">Category</label>
           <input type="text" id="modalItemCategory" required placeholder="e.g. APIs & Gateways" class="form-input">
         </div>
+        <div class="form-group">
+          <label class="form-label">Description / Workload Functionality</label>
+          <input type="text" id="modalItemDesc" placeholder="e.g. Centralized zero-trust token minting service with redis session backing." class="form-input">
+        </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Price (₹)</label>
-            <input type="number" id="modalItemPrice" required value="1250" min="1" class="form-input">
+            <label class="form-label">Monthly Cost ($)</label>
+            <input type="number" id="modalItemPrice" required value="150" min="1" class="form-input">
           </div>
           <div class="form-group">
-            <label class="form-label">Utility (pts)</label>
-            <input type="number" id="modalItemUtility" required value="80" min="1" max="100" class="form-input">
+            <label class="form-label">SLA Priority (pts)</label>
+            <input type="number" id="modalItemUtility" required value="85" min="1" max="100" class="form-input">
           </div>
           <div class="form-group">
-            <label class="form-label">Weight (kg)</label>
-            <input type="number" id="modalItemWeight" required value="1.5" min="0.1" step="0.1" class="form-input">
+            <label class="form-label">RAM Sizing (GB)</label>
+            <input type="number" id="modalItemWeight" required value="4.0" min="0.1" step="0.1" class="form-input">
           </div>
         </div>
         <div class="form-group" style="display: flex; align-items: center; gap: 0.6rem; margin-top: 0.75rem; background: #141414; padding: 8px 10px; border-radius: 4px; border: 1px solid var(--border-subtle);">
           <input type="checkbox" id="modalAutoAddToCart" checked style="accent-color: #fff; width: 16px; height: 16px; cursor: pointer;">
-          <label for="modalAutoAddToCart" class="form-label" style="margin-bottom: 0; cursor: pointer; color: #fff;">Also immediately add this custom product to Current Cart & 3D Packing</label>
+          <label for="modalAutoAddToCart" class="form-label" style="margin-bottom: 0; cursor: pointer; color: #fff;">Also immediately schedule this pod into current cluster packing</label>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn-secondary" id="btnCancelModal">Cancel</button>
-          <button type="submit" class="btn-stark-white">+ Create Custom Product</button>
+          <button type="submit" class="btn-stark-white">+ Register Pod</button>
         </div>
       </form>
     </div>
