@@ -1722,24 +1722,44 @@ document.addEventListener('DOMContentLoaded', () => {
       if (n._depth > maxDepth) maxDepth = n._depth;
     });
 
-    // Dynamic canvas dimensions: spacious and uncrowded
-    const nodeSpacingX = Math.max(76, Math.min(100, Math.floor(1450 / Math.max(1, totalNodes))));
-    const svgWidth = Math.max(1200, (totalNodes + 1) * nodeSpacingX);
-    const levelHeight = 96;
-    const svgHeight = Math.max(540, (maxDepth + 1) * levelHeight + 90);
+    // Dynamic canvas dimensions: spacious, uncrowded and scalable
+    const nodeSpacingX = Math.max(76, Math.min(100, Math.floor(1800 / Math.max(1, totalNodes))));
+    const svgWidth = Math.max(1100, (totalNodes + 1) * nodeSpacingX);
+    const levelHeight = 98;
+    const svgHeight = Math.max(560, (maxDepth + 2) * levelHeight + 70);
 
     // Map each node to (x, y) coordinates
     inOrderNodes.forEach((node, rank) => {
       node._x = Math.round(nodeSpacingX + rank * ((svgWidth - (nodeSpacingX * 2)) / Math.max(1, totalNodes - 1)));
-      node._y = Math.round(55 + node._depth * levelHeight);
+      node._y = Math.round(60 + node._depth * levelHeight);
     });
 
     const svgNS = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(svgNS, 'svg');
     svg.setAttribute('width', '100%');
     svg.setAttribute('height', '100%');
-    svg.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
-    svg.style.minWidth = `${Math.min(svgWidth, 1200)}px`;
+    svg.style.minWidth = '0';
+    svg.style.maxWidth = '100%';
+    svg.style.display = 'block';
+
+    // Initialize/sync zoom viewBox
+    avlBaseViewBox = { x: 0, y: 0, w: svgWidth, h: svgHeight };
+    if (!avlCurrentViewBox || avlZoom === 1.0) {
+      avlCurrentViewBox = { ...avlBaseViewBox };
+      avlZoom = 1.0;
+    } else {
+      const curZoom = avlZoom;
+      const newW = avlBaseViewBox.w / curZoom;
+      const newH = avlBaseViewBox.h / curZoom;
+      avlCurrentViewBox = {
+        x: Math.max(0, (avlBaseViewBox.w - newW) / 2),
+        y: Math.max(0, (avlBaseViewBox.h - newH) / 2),
+        w: newW,
+        h: newH
+      };
+    }
+    activeAvlSvg = svg;
+    applyAvlViewBox();
 
     const isLight = document.documentElement.getAttribute('data-theme') === 'light';
 
@@ -1880,8 +1900,9 @@ document.addEventListener('DOMContentLoaded', () => {
       labelText.textContent = itemTitle.length > 15 ? itemTitle.substring(0, 13) + '…' : itemTitle;
       g.appendChild(labelText);
 
-      // Click interaction
+      // Click interaction (ignores clicks during panning)
       g.addEventListener('click', () => {
+        if (hasPannedTree) return;
         if (el.avlRangeMin && el.avlRangeMax) {
           el.avlRangeMin.value = Math.max(0, Math.round(node.price - 75));
           el.avlRangeMax.value = Math.round(node.price + 75);
@@ -1894,6 +1915,160 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     el.avlTreeGraph.appendChild(svg);
+    attachAvlTreeZoomControls();
+  }
+
+  // =========================================================================
+  // AVL TREE INTERACTIVE ZOOM & DRAG-PAN CONTROLLER (ZERO HORIZONTAL SCROLL)
+  // =========================================================================
+  let avlBaseViewBox = { x: 0, y: 0, w: 1200, h: 600 };
+  let avlCurrentViewBox = { x: 0, y: 0, w: 1200, h: 600 };
+  let avlZoom = 1.0;
+  let activeAvlSvg = null;
+  let isPanningAvl = false;
+  let panStartClientX = 0;
+  let panStartClientY = 0;
+  let hasPannedTree = false;
+
+  function updateAvlZoomBadges() {
+    const pctStr = `${Math.round(avlZoom * 100)}%`;
+    const b1 = document.getElementById('avlZoomLevelBadge');
+    const b2 = document.getElementById('floatingZoomPct');
+    if (b1) b1.textContent = pctStr;
+    if (b2) b2.textContent = pctStr;
+  }
+
+  function applyAvlViewBox() {
+    if (!activeAvlSvg) return;
+    activeAvlSvg.setAttribute('viewBox', 
+      `${Math.round(avlCurrentViewBox.x)} ${Math.round(avlCurrentViewBox.y)} ${Math.round(avlCurrentViewBox.w)} ${Math.round(avlCurrentViewBox.h)}`
+    );
+    updateAvlZoomBadges();
+  }
+
+  function zoomAvlTree(factor, focalClientX, focalClientY) {
+    if (!activeAvlSvg) return;
+    const newZoom = Math.max(0.35, Math.min(4.5, avlZoom * factor));
+    if (Math.abs(newZoom - avlZoom) < 0.001) return;
+
+    const newW = avlBaseViewBox.w / newZoom;
+    const newH = avlBaseViewBox.h / newZoom;
+
+    let focalRatioX = 0.5;
+    let focalRatioY = 0.5;
+    const container = document.getElementById('avlTreeCanvasContainer');
+    if (container && focalClientX !== undefined && focalClientY !== undefined) {
+      const rect = container.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        focalRatioX = Math.max(0, Math.min(1, (focalClientX - rect.left) / rect.width));
+        focalRatioY = Math.max(0, Math.min(1, (focalClientY - rect.top) / rect.height));
+      }
+    }
+
+    const curFocalSvgX = avlCurrentViewBox.x + (avlCurrentViewBox.w * focalRatioX);
+    const curFocalSvgY = avlCurrentViewBox.y + (avlCurrentViewBox.h * focalRatioY);
+
+    avlCurrentViewBox.w = newW;
+    avlCurrentViewBox.h = newH;
+    avlCurrentViewBox.x = curFocalSvgX - (newW * focalRatioX);
+    avlCurrentViewBox.y = curFocalSvgY - (newH * focalRatioY);
+
+    avlZoom = newZoom;
+    applyAvlViewBox();
+  }
+
+  function resetAvlTreeZoom() {
+    avlZoom = 1.0;
+    avlCurrentViewBox = { ...avlBaseViewBox };
+    applyAvlViewBox();
+  }
+
+  function attachAvlTreeZoomControls() {
+    const inBtns = [document.getElementById('btnAvlZoomIn'), document.getElementById('btnFloatingZoomIn')];
+    const outBtns = [document.getElementById('btnAvlZoomOut'), document.getElementById('btnFloatingZoomOut')];
+    const resetBtns = [
+      document.getElementById('btnAvlZoomReset'), 
+      document.getElementById('btnFloatingZoomReset'),
+      document.getElementById('avlZoomLevelBadge'),
+      document.getElementById('floatingZoomPct')
+    ];
+
+    inBtns.forEach(btn => {
+      if (btn && !btn._hasAvlZoom) {
+        btn._hasAvlZoom = true;
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          zoomAvlTree(1.25);
+        });
+      }
+    });
+
+    outBtns.forEach(btn => {
+      if (btn && !btn._hasAvlZoom) {
+        btn._hasAvlZoom = true;
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          zoomAvlTree(0.8);
+        });
+      }
+    });
+
+    resetBtns.forEach(btn => {
+      if (btn && !btn._hasAvlZoom) {
+        btn._hasAvlZoom = true;
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          resetAvlTreeZoom();
+        });
+      }
+    });
+
+    const container = document.getElementById('avlTreeCanvasContainer');
+    if (container && !container._hasAvlPan) {
+      container._hasAvlPan = true;
+
+      container.addEventListener('mousedown', (e) => {
+        if (e.target.closest('button') || e.target.closest('.avl-floating-zoom')) return;
+        isPanningAvl = true;
+        hasPannedTree = false;
+        panStartClientX = e.clientX;
+        panStartClientY = e.clientY;
+        container.classList.add('panning');
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isPanningAvl || !activeAvlSvg) return;
+        const dx = e.clientX - panStartClientX;
+        const dy = e.clientY - panStartClientY;
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+          hasPannedTree = true;
+        }
+
+        const rect = container.getBoundingClientRect();
+        const scaleX = avlCurrentViewBox.w / Math.max(1, rect.width);
+        const scaleY = avlCurrentViewBox.h / Math.max(1, rect.height);
+
+        avlCurrentViewBox.x -= (dx * scaleX);
+        avlCurrentViewBox.y -= (dy * scaleY);
+        applyAvlViewBox();
+
+        panStartClientX = e.clientX;
+        panStartClientY = e.clientY;
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isPanningAvl) {
+          isPanningAvl = false;
+          container.classList.remove('panning');
+        }
+      });
+
+      container.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const factor = e.deltaY < 0 ? 1.15 : 0.87;
+        zoomAvlTree(factor, e.clientX, e.clientY);
+      }, { passive: false });
+    }
   }
 
   function highlightAvlTreeRange(minP, maxP) {
