@@ -65,7 +65,7 @@ public class Box {
 
     @Override
     public String toString() {
-        return String.format("Box #%d [%.2f/%.2f kg - %.1f%% used, %d items]",
+        return String.format("Host Node #%d [%.2f/%.2f GB RAM - %.1f%% used, %d pods]",
                 boxId, currentWeight, maxCapacity, getUtilizationPercentage(), items.size());
     }
 }
