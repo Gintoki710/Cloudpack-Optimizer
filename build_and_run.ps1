@@ -28,9 +28,9 @@ if ($LASTEXITCODE -ne 0) {
 
 Write-Host "[2/2] Compilation successful!" -ForegroundColor Green
 Write-Host ""
-Write-Host "Starting Embedded HTTP Server on http://localhost:8090 ..." -ForegroundColor Cyan
+Write-Host "Starting Embedded HTTP Server on http://localhost:8080 ..." -ForegroundColor Cyan
 Write-Host "Press Ctrl+C in this console to stop the server." -ForegroundColor Gray
 Write-Host ""
 
-Start-Process "http://localhost:8090"
-java -cp $binDir server.HttpServerApp 8090
+Start-Process "http://localhost:8080"
+java -cp $binDir server.HttpServerApp 8080

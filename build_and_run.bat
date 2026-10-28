@@ -1,8 +1,9 @@
 @echo off
 title CloudPack - Cloud Resource Scheduler & FinOps Optimizer
+cd /d "%~dp0"
 echo ====================================================================
 echo  CLOUDPACK: CLOUD RESOURCE SCHEDULER & FINOPS CLUSTER OPTIMIZER
-echo  DSA Laboratory Capstone Suite (Java 26 Native + Web Dashboard)
+echo  DSA Laboratory Capstone Suite (Java + Web Dashboard)
 echo ====================================================================
 echo.
 
@@ -20,9 +21,9 @@ if %errorlevel% neq 0 (
 del sources.txt
 echo [2/2] Compilation successful!
 echo.
-echo Starting Embedded HTTP Server on http://localhost:8090 ...
+echo Starting Embedded HTTP Server on http://localhost:8080 ...
 echo Press Ctrl+C in this window to stop the server.
 echo.
-start http://localhost:8090
-java -cp bin server.HttpServerApp 8090
+start http://localhost:8080
+java -cp bin server.HttpServerApp 8080
 pause

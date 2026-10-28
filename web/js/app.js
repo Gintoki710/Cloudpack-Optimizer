@@ -2104,6 +2104,46 @@ document.addEventListener('DOMContentLoaded', () => {
         const factor = e.deltaY < 0 ? 1.15 : 0.87;
         zoomAvlTree(factor, e.clientX, e.clientY);
       }, { passive: false });
+
+      // Touch support for mobile touch-panning
+      let touchStartX = 0, touchStartY = 0, isTouchPanning = false;
+      container.addEventListener('touchstart', (e) => {
+        if (e.target.closest('button') || e.target.closest('.avl-floating-zoom')) return;
+        if (e.touches.length === 1) {
+          isTouchPanning = true;
+          hasPannedTree = false;
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+          container.classList.add('panning');
+        }
+      }, { passive: true });
+
+      container.addEventListener('touchmove', (e) => {
+        if (!isTouchPanning || !activeAvlSvg || e.touches.length !== 1) return;
+        const dx = e.touches[0].clientX - touchStartX;
+        const dy = e.touches[0].clientY - touchStartY;
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+          hasPannedTree = true;
+        }
+        const rect = container.getBoundingClientRect();
+        const scaleX = avlCurrentViewBox.w / Math.max(1, rect.width);
+        const scaleY = avlCurrentViewBox.h / Math.max(1, rect.height);
+
+        avlCurrentViewBox.x -= (dx * scaleX);
+        avlCurrentViewBox.y -= (dy * scaleY);
+        applyAvlViewBox();
+
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        if (e.cancelable) e.preventDefault();
+      }, { passive: false });
+
+      container.addEventListener('touchend', () => {
+        if (isTouchPanning) {
+          isTouchPanning = false;
+          container.classList.remove('panning');
+        }
+      }, { passive: true });
     }
   }
 

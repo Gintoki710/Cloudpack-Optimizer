@@ -56,7 +56,7 @@ Small shopkeepers, wholesale kirana merchants, and college fest organizers face 
 ---
 
 ## 🛠️ 3. Technology Stack
-- **Language**: Java 26 Native (Standard Library `com.sun.net.httpserver.HttpServer`).
+- **Language**: Java 17+ (standard library `com.sun.net.httpserver.HttpServer`).
 - **Dependencies**: **Zero external JARs / Maven plugins required**. Runs everywhere standard Java is installed.
 - **Frontend**: Classy, responsive Single Page Application (SPA) with CSS Glassmorphism, interactive SVG/DOM AVL Tree visualizer, live Knapsack DP decision matrix, 3D shipping carton representations, and Huffman bitstream monitors.
 
@@ -72,7 +72,7 @@ build_and_run.bat
 
 ### Option B: Using PowerShell
 ```powershell
-.\build_and_run.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build_and_run.ps1
 ```
 
 ### Option C: Manual Compilation & Execution
@@ -84,6 +84,8 @@ javac -d bin (Get-ChildItem -Path src -Recurse -Filter *.java).FullName
 java -cp bin server.HttpServerApp 8080
 ```
 Open **[http://localhost:8080](http://localhost:8080)** in any modern browser!
+
+> `start_auto_sync.bat` only starts the Git synchronization helper; it does not start the application. Use `build_and_run.bat` or `build_and_run.ps1` to run the server.
 
 ---
 
@@ -106,4 +108,3 @@ Open **[http://localhost:8080](http://localhost:8080)** in any modern browser!
 
 ### Q4: Why is Huffman Coding guaranteed to be lossless and prefix-free?
 > **Answer**: Since all data characters reside strictly at the leaf nodes of the binary tree, no leaf can be an ancestor of another leaf. Consequently, no assigned binary code can be a prefix of any other code. Decoding is unambiguous: beginning at the root, each '0' traverses left and '1' traverses right until a leaf is encountered.
-
